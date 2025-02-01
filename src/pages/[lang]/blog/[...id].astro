@@ -1,0 +1,34 @@
+---
+import Layout from "@/layouts/Base.astro";
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { LOCALES } from "@/i18n";
+
+type BlogEntry = CollectionEntry<'blog'>;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return Object.keys(LOCALES).flatMap((lang) => 
+    posts.map((entry: BlogEntry) => ({
+      params: { 
+        lang,
+        id: entry.id.split('/').pop() || '' 
+      },
+      props: { entry }
+    }))
+  );
+}
+
+interface Props {
+  entry: BlogEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<Layout title={entry.data.title}>
+  <article>
+    <h1>{entry.data.title}</h1>
+    {entry.data.description && <p>{entry.data.description}</p>}
+  </article>
+</Layout>

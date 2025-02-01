@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/Base.astro";
+import NotTranslateCaution from "@/components/i18n/NotTranslateCaution.astro";
+import PageHeadline from "@/components/PageHeadline.astro";
+import { LOCALES } from "@/i18n";
+
+const { lang } = Astro.params;
+
+const title = {
+  en: "Title in English",
+  fr: "Titre en français",
+  ar: "العنوان بالعربية"
+};
+
+const description = {
+  en: "Description in English",
+  fr: "Description en français",
+  ar: "الوصف بالعربية"
+};
+
+const content = {
+  en: "Content in English",
+  fr: "Contenu en français",
+  ar: "المحتوى بالعربية"
+};
+
+// Add getStaticPaths for dynamic routing
+export function getStaticPaths() {
+  return Object.keys(LOCALES).map((lang) => ({
+    params: { lang }
+  }));
+}
+---
+
+<Layout title={title[lang as keyof typeof title]}>
+  <NotTranslateCaution usedLangs={["en", "fr", "ar"]} />
+  <div>
+    <PageHeadline title={title[lang as keyof typeof title]} />
+    <p>{description[lang as keyof typeof description]}</p>
+    <p>{content[lang as keyof typeof content]}</p>
+  </div>
+</Layout>

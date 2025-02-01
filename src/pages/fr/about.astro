@@ -1,0 +1,109 @@
+---
+import Layout from '@/layouts/Base.astro';
+---
+
+<Layout title="À Propos" lang="fr">
+  <div class="page-container">
+    <header class="header">
+      <h1>À Propos</h1>
+      <p class="update-info">
+        <span class="live-dot"></span>
+        Votre Guide de Pharmacies de Confiance
+      </p>
+    </header>
+
+    <div class="intro-section">
+      <h2>Qui Sommes-Nous</h2>
+      <p>
+        Nous nous consacrons à vous aider à trouver des pharmacies de garde quand vous 
+        en avez le plus besoin. Notre plateforme vous connecte aux pharmacies disponibles 
+        dans différentes villes, facilitant l'accès aux services de santé essentiels 24h/24.
+      </p>
+
+      <h2 class="mt-8">Notre Mission</h2>
+      <p>
+        Fournir un service fiable et facile à utiliser qui aide les gens à localiser 
+        rapidement et efficacement les pharmacies ouvertes, particulièrement pendant 
+        les urgences et après les heures d'ouverture.
+      </p>
+
+      <h2 class="mt-8">Pourquoi Nous Choisir</h2>
+      <p>
+        • Mises à jour en temps réel sur la disponibilité des pharmacies<br>
+        • Couverture dans plusieurs villes<br>
+        • Interface facile à utiliser<br>
+        • Informations sur les pharmacies 24h/24<br>
+        • Données fiables et précises
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Same styles as English version */
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #000000;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .update-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .intro-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-align: start;
+  }
+
+  .intro-section p {
+    color: #e5e7eb;
+    line-height: 1.6;
+    font-size: 1rem;
+    font-weight: 400;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0.9;
+    text-align: start;
+    margin-bottom: 2rem;
+  }
+
+  .mt-8 {
+    margin-top: 2rem;
+  }
+</style> 

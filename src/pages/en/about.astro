@@ -1,0 +1,107 @@
+---
+import Layout from '@/layouts/Base.astro';
+---
+
+<Layout title="About Us" lang="en">
+  <div class="page-container">
+    <header class="header">
+      <h1>About Us</h1>
+      <p class="update-info">
+        <span class="live-dot"></span>
+        Your Trusted Pharmacy Finder
+      </p>
+    </header>
+
+    <div class="intro-section">
+      <h2>Who We Are</h2>
+      <p>
+        We are dedicated to helping you find on-duty pharmacies when you need them most. 
+        Our platform connects you with available pharmacies across different cities, 
+        making it easier to access essential healthcare services 24/7.
+      </p>
+
+      <h2 class="mt-8">Our Mission</h2>
+      <p>
+        To provide a reliable and easy-to-use service that helps people locate open 
+        pharmacies quickly and efficiently, especially during emergencies and after hours.
+      </p>
+
+      <h2 class="mt-8">Why Choose Us</h2>
+      <p>
+        • Real-time updates on pharmacy availability<br>
+        • Coverage across multiple cities<br>
+        • Easy-to-use interface<br>
+        • 24/7 pharmacy information<br>
+        • Reliable and accurate data
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #000000;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .update-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .intro-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-align: start;
+  }
+
+  .intro-section p {
+    color: #e5e7eb;
+    line-height: 1.6;
+    font-size: 1rem;
+    font-weight: 400;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0.9;
+    text-align: start;
+    margin-bottom: 2rem;
+  }
+
+  .mt-8 {
+    margin-top: 2rem;
+  }
+</style> 

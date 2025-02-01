@@ -1,0 +1,37 @@
+@import "reset";
+@import "base";
+@import "layout";
+
+/* Global Dark Mode Styles */
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Dark mode colors */
+:root {
+  --color-bg: #000000;
+  --color-bg-secondary: #111111;
+  --color-border: #222222;
+  --color-text: #ffffff;
+  --color-text-secondary: #e5e7eb;
+  --color-primary: #22c55e;
+  --color-primary-hover: #16a34a;
+}
+
+/* Override any light mode specific styles */
+* {
+  border-color: var(--color-border);
+}
+
+a {
+  color: var(--color-text);
+}
+
+a:hover {
+  color: var(--color-primary);
+}

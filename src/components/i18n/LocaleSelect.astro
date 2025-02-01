@@ -1,0 +1,75 @@
+---
+// Select UI to switch between locales.
+
+import { getLocalePaths, LOCALES } from "@/i18n";
+
+const currentLocale = Astro.currentLocale;
+const localePaths = getLocalePaths(Astro.url);
+---
+
+<div class="language-switcher">
+  <div class="lang-buttons">
+    {localePaths.map(({ path, lang }) => (
+      <a
+        href={path}
+        class={`lang-btn ${lang === currentLocale ? 'active' : ''}`}
+        data-lang={lang}
+        dir={LOCALES[lang].dir || null}
+      >
+        {LOCALES[lang].label}
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .language-switcher {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem 0;
+  }
+
+  .lang-buttons {
+    display: flex;
+    gap: 0.5rem;
+    background: #111111;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #222222;
+  }
+
+  .lang-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .lang-btn:hover {
+    background: #222222;
+    color: #ffffff;
+  }
+
+  .lang-btn.active {
+    background: #22c55e;
+    color: #ffffff;
+  }
+
+  @media (max-width: 480px) {
+    .lang-buttons {
+      gap: 0.25rem;
+      padding: 0.2rem;
+    }
+
+    .lang-btn {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+  }
+</style>

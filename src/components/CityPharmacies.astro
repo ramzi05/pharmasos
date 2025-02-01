@@ -1,0 +1,47 @@
+---
+import type { Pharmacy } from '../types/pharmacy';
+import type { DayData } from '../types/pharmacy';
+import { pharmacyData } from '../data/pharmacyData';
+
+type Props = {
+  city: string;
+  lang: 'en' | 'fr' | 'ar';
+};
+
+const { city, lang } = Astro.props as Props;
+
+// Find today's pharmacies
+const today = new Date().toISOString().split('T')[0];
+const todayData = pharmacyData.find((day): day is DayData => day.date === today);
+
+const cityPharmacies = todayData?.pharmacies.filter(
+  (pharmacy): pharmacy is Pharmacy => pharmacy.city[lang].toLowerCase() === city.toLowerCase()
+) || [];
+---
+
+<div class="city-pharmacies">
+  <h2>{city.toUpperCase()}</h2>
+  <div class="pharmacies-grid">
+    {cityPharmacies.map((pharmacy: Pharmacy) => (
+      <div class="pharmacy-card">
+        <h3>{pharmacy.name[lang]}</h3>
+        <p>{pharmacy.location[lang]}</p>
+        <p>{pharmacy.phone}</p>
+        <p>{pharmacy.hours}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .city-pharmacies {
+    margin: 2rem 0;
+  }
+  
+  .pharmacy-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+</style> 

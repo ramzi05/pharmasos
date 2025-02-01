@@ -1,0 +1,150 @@
+---
+import Layout from '@/layouts/Base.astro';
+---
+
+<Layout title="سياسة الخصوصية">
+  <div class="page-container">
+    <header class="header">
+      <h1>سياسة الخصوصية</h1>
+      <p class="update-info">
+        <span class="live-dot"></span>
+        آخر تحديث: مارس 2024
+      </p>
+    </header>
+
+    <div class="intro-section" dir="rtl">
+      <section class="policy-section">
+        <h2>المعلومات التي نجمعها</h2>
+        <p>
+          نحن نجمع المعلومات التي تقدمها لنا مباشرة عند استخدام خدمة البحث عن الصيدليات:
+        </p>
+        <ul>
+          <li>بيانات الموقع للعثور على الصيدليات القريبة</li>
+          <li>سجل البحث للحصول على توصيات أفضل</li>
+          <li>معلومات الجهاز لتحسين الخدمة</li>
+        </ul>
+      </section>
+
+      <section class="policy-section">
+        <h2>كيف نستخدم معلوماتك</h2>
+        <p>
+          نستخدم المعلومات التي تم جمعها من أجل:
+        </p>
+        <ul>
+          <li>توفير مواقع وتوافر دقيق للصيدليات</li>
+          <li>تحسين خدمتنا وتجربة المستخدم</li>
+          <li>إرسال تحديثات مهمة حول الصيدليات القريبة</li>
+          <li>ضمان أمن منصتنا</li>
+        </ul>
+      </section>
+
+      <section class="policy-section">
+        <h2>حماية البيانات</h2>
+        <p>
+          نقوم بتنفيذ تدابير أمنية مناسبة لحماية معلوماتك الشخصية:
+        </p>
+        <ul>
+          <li>تشفير البيانات الحساسة</li>
+          <li>عمليات تدقيق أمنية منتظمة</li>
+          <li>أنظمة تخزين بيانات آمنة</li>
+        </ul>
+      </section>
+
+      <section class="policy-section">
+        <h2>اتصل بنا</h2>
+        <p>
+          إذا كان لديك أي أسئلة حول سياسة الخصوصية الخاصة بنا، يرجى الاتصال بنا:
+          <br>
+          البريد الإلكتروني: privacy@pharmasos.com
+          <br>
+          الهاتف: +212 123-456789
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Same styles as English version plus RTL support */
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #000000;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .update-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .intro-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .policy-section {
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #e5e7eb;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style-type: disc;
+    margin-right: 1.5rem;
+    margin-bottom: 1rem;
+    color: #e5e7eb;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  [dir="rtl"] .policy-section h2,
+  [dir="rtl"] .policy-section p,
+  [dir="rtl"] .policy-section li {
+    text-align: right;
+  }
+
+  [dir="rtl"] ul {
+    margin-left: 0;
+    margin-right: 1.5rem;
+  }
+</style> 

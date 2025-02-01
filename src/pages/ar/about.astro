@@ -1,0 +1,113 @@
+---
+import Layout from '@/layouts/Base.astro';
+---
+
+<Layout title="من نحن" lang="ar">
+  <div class="page-container">
+    <header class="header">
+      <h1>من نحن</h1>
+      <p class="update-info">
+        <span class="live-dot"></span>
+        دليلك الموثوق للصيدليات
+      </p>
+    </header>
+
+    <div class="intro-section" dir="rtl">
+      <h2>من نحن</h2>
+      <p>
+        نحن مكرسون لمساعدتك في العثور على صيدليات الحراسة عندما تحتاج إليها. 
+        تربط منصتنا بينك وبين الصيدليات المتاحة في مختلف المدن، 
+        مما يسهل الوصول إلى الخدمات الصحية الأساسية على مدار الساعة.
+      </p>
+
+      <h2 class="mt-8">مهمتنا</h2>
+      <p>
+        تقديم خدمة موثوقة وسهلة الاستخدام تساعد الناس في العثور على 
+        الصيدليات المفتوحة بسرعة وكفاءة، خاصة خلال حالات الطوارئ وبعد ساعات العمل.
+      </p>
+
+      <h2 class="mt-8">لماذا تختارنا</h2>
+      <p>
+        • تحديثات فورية عن توفر الصيدليات<br>
+        • تغطية في العديد من المدن<br>
+        • واجهة سهلة الاستخدام<br>
+        • معلومات عن الصيدليات على مدار 24 ساعة<br>
+        • بيانات موثوقة ودقيقة
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Same styles as English version plus RTL support */
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #000000;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  .update-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .intro-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-align: start;
+  }
+
+  .intro-section p {
+    color: #e5e7eb;
+    line-height: 1.6;
+    font-size: 1rem;
+    font-weight: 400;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0.9;
+    text-align: start;
+    margin-bottom: 2rem;
+  }
+
+  .mt-8 {
+    margin-top: 2rem;
+  }
+
+  [dir="rtl"] .intro-section h2,
+  [dir="rtl"] .intro-section p {
+    text-align: right;
+  }
+</style> 

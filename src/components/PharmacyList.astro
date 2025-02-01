@@ -1,0 +1,286 @@
+---
+import type { Pharmacy, DayData } from '@/types/pharmacy';
+import { pharmacyData } from '@/data/pharmacyData';
+
+interface Props {
+  lang: 'en' | 'fr' | 'ar';
+}
+
+const { lang } = Astro.props;
+
+// Get today's date in YYYY-MM-DD format
+const today = new Date().toISOString().split('T')[0];
+
+// Get today's pharmacies
+const todayData = pharmacyData.find((day): day is DayData => day.date === today);
+const todayPharmacies = todayData?.pharmacies || [];
+
+// Get unique locations
+const locations: string[] = [...new Set(todayPharmacies.map((p) => p.location[lang]))];
+
+interface Translations {
+  allLocations: string;
+  limitedHours: string;
+  viewMap: string;
+}
+
+const translations: Record<Props['lang'], Translations> = {
+  en: {
+    allLocations: "All Locations",
+    limitedHours: "Limited Hours",
+    viewMap: "View Map"
+  },
+  fr: {
+    allLocations: "Tous les emplacements",
+    limitedHours: "Heures limitées",
+    viewMap: "Voir la carte"
+  },
+  ar: {
+    allLocations: "جميع المواقع",
+    limitedHours: "ساعات محدودة",
+    viewMap: "عرض الخريطة"
+  }
+};
+
+const t: Translations = translations[lang];
+---
+
+<div class="pharmacy-list">
+  <div class="filters">
+    <select id="location-filter">
+      <option value="all">{t.allLocations}</option>
+      {locations.map((location: string) => (
+        <option value={location}>{location}</option>
+      ))}
+    </select>
+    
+    <div class="hours-filter">
+      <button class="filter-btn" data-hours="all">All</button>
+      <button class="filter-btn" data-hours="limited">{t.limitedHours}</button>
+      <button class="filter-btn" data-hours="24h">24/7</button>
+    </div>
+  </div>
+
+  <div class="pharmacies-grid">
+    {todayPharmacies.map((pharmacy: Pharmacy) => (
+      <div 
+        class="pharmacy-card"
+        data-location={pharmacy.location[lang]}
+        data-hours={pharmacy.hours === "24/7" ? "24h" : "limited"}
+      >
+        <h3>{pharmacy.name[lang]}</h3>
+        <p>{pharmacy.location[lang]}</p>
+        <p>{pharmacy.phone}</p>
+        <p>{pharmacy.hours}</p>
+        <a 
+          href={pharmacy.maps.googleMaps}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="map-link"
+        >
+          {t.viewMap}
+        </a>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+const locationFilter = document.getElementById('location-filter') as HTMLSelectElement;
+const pharmacyCards = document.querySelectorAll('.pharmacy-card');
+const filterButtons = document.querySelectorAll('.filter-btn');
+
+function filterPharmacies() {
+  const selectedLocation = locationFilter.value;
+  const selectedHours = document.querySelector('.filter-btn.active')?.getAttribute('data-hours');
+
+  pharmacyCards.forEach((card) => {
+    const location = card.getAttribute('data-location');
+    const hours = card.getAttribute('data-hours');
+
+    const locationMatch = selectedLocation === 'all' || location === selectedLocation;
+    const hoursMatch = !selectedHours || selectedHours === 'all' || hours === selectedHours;
+
+    (card as HTMLElement).style.display = locationMatch && hoursMatch ? 'block' : 'none';
+  });
+}
+
+locationFilter.addEventListener('change', filterPharmacies);
+
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    (e.target as HTMLElement).classList.add('active');
+    filterPharmacies();
+  });
+});
+</script>
+
+<style>
+  .pharmacy-section {
+    padding: 2rem 1rem;
+    background: var(--color-base);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-main);
+    margin-bottom: 2rem;
+  }
+
+  .filters {
+    margin-bottom: 2rem;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-select {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    background: var(--color-base);
+    color: var(--color-text);
+    font-size: 0.9rem;
+  }
+
+  .hours-filter {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    background: var(--color-base);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-btn.active {
+    background: var(--color-main);
+    color: var(--color-base);
+    border-color: var(--color-main);
+  }
+
+  .pharmacy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .pharmacy-card {
+    background: var(--color-base);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    border: 1px solid var(--color-border);
+  }
+
+  .pharmacy-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-header {
+    padding: 1.5rem;
+    background: var(--color-main);
+    color: var(--color-base);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
+  .hours-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .hours-24 {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .hours-limited {
+    background: #FF9800;
+    color: white;
+  }
+
+  .location, .phone-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+  }
+
+  .phone-link {
+    text-decoration: none;
+    color: var(--color-main);
+  }
+
+  .phone-link:hover {
+    text-decoration: underline;
+  }
+
+  .icon {
+    font-size: 1.2rem;
+  }
+
+  .card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .map-link {
+    color: var(--color-main);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .map-link:hover {
+    text-decoration: underline;
+  }
+
+  /* RTL Support */
+  .rtl {
+    direction: rtl;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .pharmacy-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
