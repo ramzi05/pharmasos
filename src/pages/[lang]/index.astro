@@ -3,6 +3,8 @@ import { LOCALES, useTranslations, type Lang } from "@/i18n";
 import Layout from "@/layouts/Base.astro";
 import pharmacyData from "@/data/pharmacyData.json";
 
+export const prerender = true;
+
 interface CityInfo {
   name: {
     fr: string;

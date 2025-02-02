@@ -2,20 +2,35 @@
 import Layout from "@/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import { LOCALES } from "@/i18n";
+
+type BlogEntry = CollectionEntry<'blog'>;
 
 export const prerender = true;
 
 const validLanguages = ['en', 'fr', 'ar'] as const;
 type ValidLanguage = typeof validLanguages[number];
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return validLanguages.map(lang => ({
-    params: { lang }
-  }));
+  
+  return validLanguages.flatMap(lang => 
+    posts
+      .filter(post => post.id.startsWith(lang + '/'))
+      .map(post => ({
+        params: { 
+          lang,
+          id: post.id.split('/').slice(1).join('/')
+        },
+        props: { entry: post }
+      }))
+  );
 }
 
+interface Props {
+  entry: BlogEntry;
+}
+
+const { entry } = Astro.props;
 const { lang } = Astro.params;
 const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
 
@@ -26,19 +41,39 @@ const translations = {
     ar: "مقال"
   }
 } as const;
-
-type BlogEntry = CollectionEntry<'blog'>;
-
-interface Props {
-  entry: BlogEntry;
-}
-
-const { entry } = Astro.props;
 ---
 
-<Layout title={translations.title[currentLang]}>
-  <div class="blog-post">
-    <h1>{translations.title[currentLang]}</h1>
-    {entry.data.description && <p>{entry.data.description}</p>}
-  </div>
+<Layout title={`${entry.data.title} - ${translations.title[currentLang]}`}>
+  <article class="blog-post">
+    <h1>{entry.data.title}</h1>
+    {entry.data.description && <p class="description">{entry.data.description}</p>}
+    <div class="content">
+      <slot />
+    </div>
+  </article>
 </Layout>
+
+<style>
+  .blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .description {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .content {
+    line-height: 1.6;
+  }
+</style>
