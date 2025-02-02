@@ -1,14 +1,20 @@
 {
-	"extends": "astro/tsconfigs/strict",
-	"include": [".astro/types.d.ts", "**/*"],
+	"extends": "astro/tsconfigs/base",
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src/**/*.astro",
+		"src/**/*.json"
+	],
 	"exclude": ["dist"],
 	"compilerOptions": {
 		"baseUrl": ".",
-		"strictNullChecks": true,
 		"paths": {
 			"@/*": ["src/*"]
 		},
-		"types": ["astro/client"],
-		"jsx": "preserve"
+		"jsx": "preserve",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"strictNullChecks": true
 	}
 }

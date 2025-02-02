@@ -1,5 +1,5 @@
 {
-  "date": "2025-02-01",
+  "date": "2025-02-02",
   "pharmacies": [
     {
       "city": {
@@ -2180,9 +2180,9 @@
       "phone": "0524-30-48-67",
       "hours": "9h à 00h00",
       "address": {
-        "fr": "26, Lot Taloujt II Amerchich en face de l’hôpital Amerchich",
-        "en": "26, Lot Taloujt II Amerchich en face de l’hôpital Amerchich",
-        "ar": "26, Lot Taloujt II Amerchich en face de l’hôpital Amerchich"
+        "fr": "26, Lot Taloujt II Amerchich en face de l'hôpital Amerchich",
+        "en": "26, Lot Taloujt II Amerchich en face de l'hôpital Amerchich",
+        "ar": "26, Lot Taloujt II Amerchich en face de l'hôpital Amerchich"
       },
       "maps": {
         "message": {
@@ -2648,9 +2648,9 @@
       "phone": "0524-49-44-04",
       "hours": "9h à 00h00",
       "address": {
-        "fr": "24, Op. Sebou à côté de l’école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa",
-        "en": "24, Op. Sebou à côté de l’école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa",
-        "ar": "24, Op. Sebou à côté de l’école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa"
+        "fr": "24, Op. Sebou à côté de l'école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa",
+        "en": "24, Op. Sebou à côté de l'école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa",
+        "ar": "24, Op. Sebou à côté de l'école Lamrani et la nouvelle Mosquée Massira 3, à 800m de Carrefour Targa"
       },
       "maps": {
         "message": {
@@ -2684,9 +2684,9 @@
       "phone": "0524-36-06-46",
       "hours": "9h à 00h00",
       "address": {
-        "fr": "Route principale de Lamhamid (Av. Guemassa) près de l’Ecole Chkili M’hamid et la Société Générale de Banque",
-        "en": "Route principale de Lamhamid (Av. Guemassa) près de l’Ecole Chkili M’hamid et la Société Générale de Banque",
-        "ar": "Route principale de Lamhamid (Av. Guemassa) près de l’Ecole Chkili M’hamid et la Société Générale de Banque"
+        "fr": "Route principale de Lamhamid (Av. Guemassa) près de l'Ecole Chkili M'hamid et la Société Générale de Banque",
+        "en": "Route principale de Lamhamid (Av. Guemassa) près de l'Ecole Chkili M'hamid et la Société Générale de Banque",
+        "ar": "Route principale de Lamhamid (Av. Guemassa) près de l'Ecole Chkili M'hamid et la Société Générale de Banque"
       },
       "maps": {
         "message": {
@@ -3260,9 +3260,9 @@
       "phone": "0524-38-72-72",
       "hours": "nuit",
       "address": {
-        "fr": "147, Jnane El Afia Bab H’mer près du Collège El Mansour Eddahbi",
-        "en": "147, Jnane El Afia Bab H’mer près du Collège El Mansour Eddahbi",
-        "ar": "147, Jnane El Afia Bab H’mer près du Collège El Mansour Eddahbi"
+        "fr": "147, Jnane El Afia Bab H'mer près du Collège El Mansour Eddahbi",
+        "en": "147, Jnane El Afia Bab H'mer près du Collège El Mansour Eddahbi",
+        "ar": "147, Jnane El Afia Bab H'mer près du Collège El Mansour Eddahbi"
       },
       "maps": {
         "message": {
@@ -3442,8 +3442,8 @@
           "phone": "0537 79 83 47",
           "hours": "24h/24h",
           "address": {
-            "fr": "Av El Massira N°16 Amal 4 ext  C.Y.M | ",
-            "en": "Av El Massira N°16 Amal 4 ext  C.Y.M",
+            "fr": "Av El Massira N°16 Amal 4 ext  C.Y.M | ",
+            "en": "Av El Massira N°16 Amal 4 ext  C.Y.M",
             "ar": "شارع El المسيرة N°16 ال 4 ext C.Y.M"
           },
           "maps": {
@@ -3610,7 +3610,7 @@
             "ar": "الرباط"
           },
           "name": {
-            "fr": "Pharmacie AL MINBAT",
+            "fr": "PHARMACIE AL MINBAT",
             "en": "Pharmacie AL MINBAT",
             "ar": "Pharmacie ال MINBAT"
           },

@@ -32,11 +32,6 @@ export interface Pharmacy {
       waze: string;
       apple_maps: string;
     };
-    googleMaps: string;
-    coordinates: {
-      lat: number;
-      lng: number;
-    };
   };
 }
 

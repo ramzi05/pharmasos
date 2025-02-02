@@ -1,6 +1,8 @@
 ---
-import type { Pharmacy, DayData } from '@/types/pharmacy';
-import { pharmacyData } from '@/data/pharmacyData';
+import type { Pharmacy } from '@/types/pharmacy';
+
+// Import pharmacy data directly
+import pharmacyData from '../data/pharmacyData.json';
 
 interface Props {
   lang: 'en' | 'fr' | 'ar';
@@ -8,15 +10,11 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Format today's date to match your data format
-const today = new Date();
-const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-// Get today's pharmacies
-const todayPharmacies = pharmacyData.pharmacies || [];
+// Get pharmacies
+const pharmacies: Pharmacy[] = pharmacyData.pharmacies || [];
 
 // Get unique locations
-const locations: string[] = [...new Set(todayPharmacies.map((p) => p.location[lang]))];
+const locations: string[] = [...new Set(pharmacies.map((p: Pharmacy) => p.location[lang]))].sort();
 
 interface Translations {
   allLocations: string;
@@ -47,6 +45,10 @@ const translations: Record<Props['lang'], Translations> = {
 };
 
 const t: Translations = translations[lang];
+
+// Debug logging
+console.log('Pharmacies count:', pharmacies.length);
+console.log('Locations:', locations);
 ---
 
 <div class="pharmacy-list">
@@ -66,8 +68,8 @@ const t: Translations = translations[lang];
   </div>
 
   <div class="pharmacies-grid">
-    {todayPharmacies.length > 0 ? (
-      todayPharmacies.map((pharmacy: Pharmacy) => (
+    {pharmacies.length > 0 ? (
+      pharmacies.map((pharmacy: Pharmacy) => (
         <div 
           class="pharmacy-card"
           data-location={pharmacy.location[lang]}

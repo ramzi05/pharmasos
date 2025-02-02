@@ -1,426 +1,228 @@
 ---
-import { useTranslations, type Lang, LOCALES } from "@/i18n";
 import Layout from "@/layouts/Base.astro";
-import type { DayData, Pharmacy } from '@/types/pharmacy';
-import { pharmacyData } from '@/data/pharmacyData';
+import type { Pharmacy } from '@/types/pharmacy';
+import pharmacyData from '@/data/pharmacyData.json';
+
+export const prerender = true;
 
 export async function getStaticPaths() {
-  const cities = [...new Set(pharmacyData[0].pharmacies.map(
-    (p) => p.city.en.toLowerCase().replace(/\s+/g, '-')
-  ))];
+  const cities = [...new Set(pharmacyData.pharmacies.map(p => p.city.en.toLowerCase()))];
   
-  return Object.keys(LOCALES).flatMap(lang => 
-    cities.map(city => ({
-      params: { lang, city }
-    }))
-  );
+  return cities.flatMap(city => {
+    return ['en', 'fr', 'ar'].map(lang => ({
+      params: { lang, city },
+      props: { 
+        pharmacies: pharmacyData.pharmacies.filter(
+          p => p.city.en.toLowerCase() === city
+        )
+      }
+    }));
+  });
 }
 
-const { city, lang } = Astro.params;
-const locale = lang as Lang;
-const t = useTranslations(locale);
+const { lang, city } = Astro.params;
+const { pharmacies } = Astro.props;
 
-const today = new Date().toISOString().split('T')[0];
-
-const todayData = pharmacyData.find((day): day is DayData => day.date === today);
-const cityPharmacies = todayData?.pharmacies.filter(
-  (pharmacy): pharmacy is Pharmacy => pharmacy.city.en.toLowerCase().replace(/\s+/g, '-') === city?.toLowerCase()
-) || [];
-
-// Get city name in current locale
-const cityName = cityPharmacies[0]?.city[locale as keyof typeof cityPharmacies[0]['city']] || city;
-
-// Create localized title and description
-const pageTitle = t({
-  en: `24/7 Pharmacies in ${cityName}`,
-  fr: `Pharmacies de Garde à ${cityName}`,
-  ar: `صيدليات الحراسة في ${cityName}`
-});
-
-const pageDescription = t({
-  en: `Find open and on-duty pharmacies in ${cityName}. 24/7 pharmacy locations, phone numbers, and directions.`,
-  fr: `Trouvez les pharmacies de garde à ${cityName}. Emplacements, numéros de téléphone et directions des pharmacies ouvertes 24h/24.`,
-  ar: `اعثر على صيدليات الحراسة في ${cityName}. مواقع الصيدليات المناوبة، أرقام الهواتف والاتجاهات.`
-});
-
-// Debug
-console.log('City:', city);
-console.log('Found data:', cityPharmacies);
+const translations = {
+  title: {
+    fr: `${city} - Pharmacies de Garde`,
+    en: `${city} - On-Duty Pharmacies`,
+    ar: `${city} - صيدليات الحراسة`
+  },
+  subtitle: {
+    fr: "Trouvez facilement une pharmacie ouverte près de chez vous",
+    en: "Easily find an open pharmacy near you",
+    ar: "اعثر بسهولة على صيدلية مفتوحة بالقرب منك"
+  },
+  directions: {
+    fr: "Cliquez pour obtenir l'itinéraire sur:",
+    en: "Click to get directions on:",
+    ar: "انقر للحصول على الاتجاهات على:"
+  }
+};
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
-  <div class="container">
-    <header class="page-header">
-      <a href={`/${locale}`} class="back-link">
-        <span class="back-arrow">←</span>
-        {t({
-          en: "Back to Cities",
-          fr: "Retour aux Villes",
-          ar: "العودة إلى المدن"
-        })}
-      </a>
-      <h1>{cityPharmacies[0]?.city[locale as keyof typeof cityPharmacies[0]['city']]} - {t({
-        en: "On-Duty Pharmacies",
-        fr: "Pharmacies de Garde",
-        ar: "صيدليات الحراسة"
-      })}</h1>
+<Layout title={translations.title[lang]}>
+  <div class="pharmacy-page">
+    <h1>{translations.title[lang]}</h1>
+    <p class="subtitle">{translations.subtitle[lang]}</p>
 
-      <div class="page-subtitle">
-        <p class="subtitle-text">
-          {t({
-            fr: "Trouvez facilement une pharmacie ouverte près de chez vous",
-            en: "Find an open pharmacy near you",
-            ar: "اعثر بسهولة على صيدلية مفتوحة بالقرب منك"
-          })}
-        </p>
-      </div>
-    </header>
+    <div class="pharmacy-list">
+      {pharmacies.map((pharmacy: Pharmacy) => (
+        <div class="pharmacy-card">
+          <div class="card-header">
+            <h2>{pharmacy.name[lang]}</h2>
+            <span class="hours-badge">{pharmacy.hours}</span>
+          </div>
 
-    {!cityPharmacies?.length ? (
-      <div class="no-data">
-        <p>{t({
-          en: "No pharmacies found for this city",
-          fr: "Aucune pharmacie trouvée pour cette ville",
-          ar: "لم يتم العثور على صيدليات في هذه المدينة"
-        })}</p>
-      </div>
-    ) : (
-      <div class="pharmacy-grid">
-        {cityPharmacies.map(pharmacy => (
-          <article class="pharmacy-card">
-            <div class="card-status">
-              <span class={`status-indicator ${String(pharmacy.hours).includes('24h') ? 'open-24' : 'limited'}`}>
-                {pharmacy.hours || t({
-                  en: "Open 24/7",
-                  fr: "Ouvert 24h/24",
-                  ar: "مفتوح 24/24"
-                })}
-              </span>
-            </div>
-            
-            <div class="card-main">
-              <h2 class="pharmacy-name">{pharmacy.name[locale as keyof typeof pharmacy.name]}</h2>
-              
-              <div class="location-details">
-                <div class="detail-row">
-                  <span class="icon">📍</span>
-                  <span>{pharmacy.location[locale as keyof typeof pharmacy.location]}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="icon">🏥</span>
-                  <span>{pharmacy.address[locale as keyof typeof pharmacy.address]}</span>
-                </div>
-                {pharmacy.phone ? (
-                  <a href={`tel:${pharmacy.phone.replace(/\s/g, '')}`} class="detail-row phone">
-                    <span class="icon">📞</span>
-                    <span class="phone-number">
-                      {pharmacy.phone}
-                    </span>
-                  </a>
-                ) : null}
-              </div>
+          <div class="card-content">
+            <div class="info-row">
+              <span class="icon">📍</span>
+              <span>{pharmacy.location[lang]}</span>
             </div>
 
-            <div class="navigation-options">
-              <p class="nav-label">{pharmacy.maps.message[locale as keyof typeof pharmacy.maps.message]}</p>
-              <div class="nav-buttons">
-                <a href={pharmacy.maps.links.google_maps} target="_blank" rel="noopener" class="nav-btn">
-                  <span>Google Maps</span>
-                </a>
-                {pharmacy.maps.links.waze && (
-                  <a href={pharmacy.maps.links.waze} target="_blank" rel="noopener" class="nav-btn">
-                    <span>Waze</span>
-                  </a>
-                )}
-                {pharmacy.maps.links.apple_maps && (
-                  <a href={pharmacy.maps.links.apple_maps} target="_blank" rel="noopener" class="nav-btn">
-                    <span>Apple Maps</span>
-                  </a>
-                )}
-              </div>
+            <div class="info-row">
+              <span class="icon">🏢</span>
+              <span>{pharmacy.address[lang]}</span>
             </div>
-          </article>
-        ))}
-      </div>
-    )}
+
+            <div class="info-row phone">
+              <span class="icon">📞</span>
+              <span>{pharmacy.phone}</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <p class="directions-text">{translations.directions[lang]}</p>
+            <div class="nav-buttons">
+              <a href={pharmacy.maps.links.google_maps} target="_blank" rel="noopener noreferrer" class="nav-button">
+                Google Maps
+              </a>
+              <a href={pharmacy.maps.links.waze} target="_blank" rel="noopener noreferrer" class="nav-button">
+                Waze
+              </a>
+              <a href={pharmacy.maps.links.apple_maps} target="_blank" rel="noopener noreferrer" class="nav-button">
+                Apple Maps
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   </div>
 </Layout>
 
 <style>
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.5rem;
+  .pharmacy-page {
     background: #000000;
-  }
-
-  .page-header {
-    margin-bottom: 2.5rem;
-    text-align: center;
-  }
-
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     color: #ffffff;
-    text-decoration: none;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-    transition: opacity 0.2s;
-  }
-
-  .back-link:hover {
-    opacity: 0.9;
-  }
-
-  .back-arrow {
-    transition: transform 0.2s;
-    color: #ffffff;
-  }
-
-  .back-link:hover .back-arrow {
-    transform: translateX(-4px);
+    padding: 2rem 1rem;
+    min-height: 100vh;
   }
 
   h1 {
+    text-align: center;
     font-size: 2rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 
-  .page-subtitle {
+  .subtitle {
+    text-align: center;
+    color: #cccccc;
     margin-bottom: 2rem;
   }
 
-  .subtitle-text {
-    color: #e5e7eb;
-    font-size: 1.125rem;
-    opacity: 0.9;
-    line-height: 1.5;
-  }
-
-  [dir="rtl"] .subtitle-text {
-    text-align: right;
-  }
-
-  [dir="ltr"] .subtitle-text {
-    text-align: left;
-  }
-
-  .pharmacy-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  .pharmacy-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
   }
 
   .pharmacy-card {
-    background: #111111;
-    border: 1px solid #222222;
-    border-radius: 1rem;
+    background: #1a1a1a;
+    border-radius: 12px;
     overflow: hidden;
-    transition: all 0.3s ease;
-    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
   }
 
-  .pharmacy-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px -8px rgba(34, 197, 94, 0.2);
-  }
-
-  .card-status {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1;
-  }
-
-  .status-indicator {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    background: #000000;
-    color: #22c55e;
-  }
-
-  .status-indicator.open-24 {
-    background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
-  }
-
-  .status-indicator.limited {
-    background: rgba(234, 179, 8, 0.2);
-    color: #fbbf24;
-  }
-
-  .card-main {
-    padding: 1.5rem;
-  }
-
-  .pharmacy-name {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 1.25rem;
-    padding-right: 6rem;
-  }
-
-  .location-details {
+  .card-header {
+    padding: 1.25rem;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
   }
 
-  .detail-row {
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .hours-badge {
+    background: #8B6B23;
+    color: white;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+  }
+
+  .card-content {
+    padding: 1.25rem;
+  }
+
+  .info-row {
     display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    font-size: 0.875rem;
-    color: #e5e7eb;
-    text-decoration: none;
-  }
-
-  .detail-row.phone {
-    color: #22c55e;
-    font-weight: 500;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #cccccc;
+    font-size: 1.1rem;
   }
 
   .icon {
-    flex-shrink: 0;
-    font-size: 1.125rem;
-  }
-
-  .navigation-options {
-    padding: 1.25rem;
-    background: #000000;
-    border-top: 1px solid #222222;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .nav-label {
-    font-size: 0.75rem;
-    color: #e5e7eb;
-    margin-bottom: 1rem;
+    margin-right: 0.75rem;
+    font-size: 1.4rem;
+    width: 2rem;
     text-align: center;
-    max-width: 90%;
+  }
+
+  .phone {
+    color: #22C55E;
+    font-weight: 500;
+  }
+
+  .card-footer {
+    padding: 1.25rem;
+    border-top: 1px solid #333;
+    background: #242424;
+  }
+
+  .directions-text {
+    text-align: center;
+    color: #cccccc;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
   }
 
   .nav-buttons {
     display: flex;
-    gap: 0.75rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
-    max-width: 400px;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1rem;
   }
 
-  .nav-btn {
+  .nav-button {
     flex: 1;
-    min-width: 100px;
-    max-width: 120px;
-    padding: 0.625rem 0.75rem;
-    background: #111111;
-    border: 1px solid #222222;
-    border-radius: 0.5rem;
-    color: #22c55e;
-    font-size: 0.75rem;
-    font-weight: 500;
+    padding: 0.75rem;
+    text-align: center;
+    color: #22C55E;
     text-decoration: none;
+    border: 1px solid #22C55E;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
     transition: all 0.2s ease;
-    text-align: center;
-    white-space: nowrap;
   }
 
-  .nav-btn:hover {
-    background: #22c55e;
-    color: #1f2937;
-    border-color: #22c55e;
-    transform: translateY(-1px);
-  }
-
-  .no-data {
-    text-align: center;
-    padding: 3rem;
-    background: #111111;
-    border: 1px solid #222222;
-    border-radius: 1rem;
-    color: #e5e7eb;
+  .nav-button:hover {
+    background: #22C55E;
+    color: #000000;
   }
 
   @media (max-width: 768px) {
-    .container {
-      padding: 1rem;
+    .pharmacy-list {
+      padding: 0 1rem;
     }
 
-    .pharmacy-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .pharmacy-name {
-      padding-right: 0;
-      margin-top: 2.5rem;
+    .card-header h2 {
+      font-size: 1.25rem;
     }
 
     .nav-buttons {
-      flex-direction: row;
-      gap: 0.5rem;
-      max-width: 100%;
+      padding: 0;
     }
-
-    .nav-btn {
-      flex: 1;
-      min-width: 0;
-      max-width: none;
-      padding: 0.75rem 0.5rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .nav-buttons {
-      flex-direction: column;
-    }
-
-    .nav-btn {
-      width: 100%;
-      max-width: none;
-    }
-  }
-
-  /* RTL Support */
-  [dir="rtl"] .back-arrow {
-    transform: scaleX(-1);
-  }
-
-  [dir="rtl"] .back-link:hover .back-arrow {
-    transform: scaleX(-1) translateX(4px);
-  }
-
-  [dir="rtl"] .card-status {
-    right: auto;
-    left: 1rem;
-  }
-
-  [dir="rtl"] .pharmacy-name {
-    padding-right: 0;
-    padding-left: 6rem;
-  }
-
-  .phone-number {
-    display: inline-block;
-    direction: ltr;
-    text-align: left;
-  }
-
-  [dir="rtl"] .detail-row.phone {
-    flex-direction: row-reverse;
-  }
-
-  [dir="rtl"] .phone-number {
-    text-align: left;
   }
 </style>
