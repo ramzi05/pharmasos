@@ -13,15 +13,15 @@ import "@/styles/global.css";
 
 interface Props {
   title: string;
-  lang?: 'en' | 'fr' | 'ar';
-  description?: string;
 }
 
-const { title, lang = 'en', description = '' } = Astro.props;
+const { title } = Astro.props;
+const currentLang = Astro.url.pathname.split('/')[1] || 'fr';
+const dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
 const locale = Astro.currentLocale as Lang;
 const localeTitle = title ? `${title} - ${t(SITE_TITLE)}` : t(SITE_TITLE);
-const metaDescription = description || t(SITE_DESCRIPTION);
+const metaDescription = t(SITE_DESCRIPTION);
 ---
 
 <!--
@@ -29,96 +29,25 @@ const metaDescription = description || t(SITE_DESCRIPTION);
  
 
 -->
-<html lang={lang}>
+<html lang={currentLang} dir={dir}>
   <head>
     <meta charset="UTF-8" />
-    <title>{localeTitle}</title>
-    <meta name="description" content={metaDescription} />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="generator" content={Astro.generator} />
-
-    <!-- SEO Meta Tags -->
-    <meta name="robots" content="index, follow" />
-    <meta name="keywords" content="pharmacy, pharmacies, on-duty pharmacy, 24/7 pharmacy, emergency pharmacy, صيدلية حراسة, medical, صيدليات الحراسة, healthcare, {locale}" />
-    <meta name="author" content="Pharma SOS" />
-    <meta name="application-name" content="Pharma SOS" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#ffffff" />
-    <meta name="format-detection" content="telephone=yes" />
-    <link rel="canonical" href={Astro.url} />
-
-    {
-      getLocalePaths(Astro.url).map((props) => (
-        <link
-          rel="alternate"
-          hreflang={LOCALES[props.lang].lang || props.lang}
-          href={Astro.site?.origin + props.path}
-        />
-      ))
-    }
-
-    <!-- icon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" sizes="192x192" href="/android-chrome.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="color-scheme" content="light dark" />
-
-    <!-- OGP -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={localeTitle} />
-    <meta property="og:site_name" content={localeTitle} />
-    <meta property="og:description" content={metaDescription} />
-    <meta property="og:image" content={Astro.site + "ogp.png"} />
-    <meta property="og:url" content={Astro.url} />
-    <meta property="og:locale" content={LOCALES[locale].lang || locale} />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content={t(X_ACCOUNT)} />
-
-    <!-- External Resource -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <link rel="preload" as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;800&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;800&display=swap" media="print" onload={`this.media='all'`} />
-
-    <link rel="preload" as="style" fetchpriority="high" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp&display=swap" media="print" onload={`this.media='all'`} />
-
-    <LocaleHtmlHead />
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": localeTitle,
-      "description": metaDescription,
-      "url": Astro.url,
-      "applicationCategory": "HealthApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "provider": {
-        "@type": "Personnel",
-        "name": "Pharma SOS",
-        "description": "Service de localisation des pharmacies en cas d'urgence, Emergency pharmacy locator service, خدمة تحديد موقع صيدلية الطوارئ"
-      }
-    })} />
   </head>
-
   <body>
-    <LocaleSuggest />
     <Header />
-
-    <main class="l-main l-content">
+    <main>
       <slot />
     </main>
-
     <Footer />
-
-    { import.meta.env.DEV && <style>:root { scroll-behavior: auto }</style> }
   </body>
 </html>
+
+<style>
+  main {
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    padding: 1rem;
+  }
+</style>

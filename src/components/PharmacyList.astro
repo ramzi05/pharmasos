@@ -47,7 +47,7 @@ const translations: Record<Props['lang'], Translations> = {
   }
 };
 
-const t: Translations = translations[lang];
+const t = translations[lang];
 
 // Debug logging
 console.log('Pharmacies count:', pharmacies.length);
@@ -56,10 +56,10 @@ console.log('Cities:', cities);
 
 <div class="pharmacy-list">
   <div class="filters">
-    <select id="city-select" onchange="window.location.href = this.value">
-      <option value={`/${lang}/pharmacies`}>{t.allLocations}</option>
+    <select id="city-select">
+      <option value="">{t.allLocations}</option>
       {cities.map(({ name, slug }) => (
-        <option value={`/${lang}/pharmacies/${slug}`}>{name}</option>
+        <option value={slug}>{name}</option>
       ))}
     </select>
     
@@ -128,6 +128,20 @@ filterButtons.forEach(btn => {
     (e.target as HTMLElement).classList.add('active');
     filterPharmacies();
   });
+});
+
+const citySelect = document.getElementById('city-select') as HTMLSelectElement;
+  
+citySelect.addEventListener('change', (e) => {
+  const select = e.target as HTMLSelectElement;
+  const selectedCity = select.value;
+  const currentLang = document.documentElement.lang || 'fr';
+  
+  if (selectedCity) {
+    window.location.href = `/${currentLang}/pharmacies/${selectedCity}`;
+  } else {
+    window.location.href = `/${currentLang}/pharmacies`;
+  }
 });
 </script>
 
