@@ -6,18 +6,34 @@ import pharmacyData from '@/data/pharmacyData.json';
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const cities = [...new Set(pharmacyData.pharmacies.map(p => p.city.en.toLowerCase()))];
-  
-  return cities.flatMap(city => {
-    return ['en', 'fr', 'ar'].map(lang => ({
-      params: { lang, city },
-      props: { 
-        pharmacies: pharmacyData.pharmacies.filter(
-          p => p.city.en.toLowerCase() === city
-        )
+  // Get unique cities from all languages
+  const pharmacies = pharmacyData.pharmacies || [];
+  const cityPaths = [];
+
+  // For each pharmacy, create paths for each language using the correct city name
+  pharmacies.forEach(pharmacy => {
+    ['en', 'fr', 'ar'].forEach(lang => {
+      const citySlug = pharmacy.city[lang].toLowerCase().trim();
+      
+      // Check if we already have this combination
+      const exists = cityPaths.some(path => 
+        path.params.lang === lang && path.params.city === citySlug
+      );
+
+      if (!exists) {
+        cityPaths.push({
+          params: { lang, city: citySlug },
+          props: { 
+            pharmacies: pharmacies.filter(p => 
+              p.city[lang].toLowerCase().trim() === citySlug
+            )
+          }
+        });
       }
-    }));
+    });
   });
+
+  return cityPaths;
 }
 
 const { lang, city } = Astro.params;

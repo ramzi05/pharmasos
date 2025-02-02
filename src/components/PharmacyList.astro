@@ -13,8 +13,11 @@ const { lang } = Astro.props;
 // Get pharmacies
 const pharmacies: Pharmacy[] = pharmacyData.pharmacies || [];
 
-// Get unique locations
-const locations: string[] = [...new Set(pharmacies.map((p: Pharmacy) => p.location[lang]))].sort();
+// Get unique cities with proper slugs for the current language
+const cities = [...new Set(pharmacies.map(p => ({
+  name: p.city[lang],
+  slug: p.city[lang].toLowerCase().trim()
+})))].sort((a, b) => a.name.localeCompare(b.name));
 
 interface Translations {
   allLocations: string;
@@ -48,15 +51,15 @@ const t: Translations = translations[lang];
 
 // Debug logging
 console.log('Pharmacies count:', pharmacies.length);
-console.log('Locations:', locations);
+console.log('Cities:', cities);
 ---
 
 <div class="pharmacy-list">
   <div class="filters">
-    <select id="location-filter">
-      <option value="all">{t.allLocations}</option>
-      {locations.map((location: string) => (
-        <option value={location}>{location}</option>
+    <select id="city-select" onchange="window.location.href = this.value">
+      <option value={`/${lang}/pharmacies`}>{t.allLocations}</option>
+      {cities.map(({ name, slug }) => (
+        <option value={`/${lang}/pharmacies/${slug}`}>{name}</option>
       ))}
     </select>
     
