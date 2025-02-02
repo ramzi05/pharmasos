@@ -2,13 +2,11 @@
 import Layout from "@/layouts/Base.astro";
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { validLanguages, type ValidLanguage, defaultLanguage } from '@/constants/languages';
 
 type BlogEntry = CollectionEntry<'blog'>;
 
 export const prerender = true;
-
-const validLanguages = ['en', 'fr', 'ar'] as const;
-type ValidLanguage = typeof validLanguages[number];
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -32,7 +30,7 @@ interface Props {
 
 const { entry } = Astro.props;
 const { lang } = Astro.params;
-const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : defaultLanguage;
 
 const translations = {
   title: {
@@ -75,5 +73,10 @@ const translations = {
 
   .content {
     line-height: 1.6;
+  }
+
+  /* RTL support for Arabic */
+  [dir="rtl"] .blog-post {
+    direction: rtl;
   }
 </style>

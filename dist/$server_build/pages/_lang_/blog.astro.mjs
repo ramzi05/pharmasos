@@ -1,7 +1,8 @@
-import { c as createComponent, a as createAstro, r as renderTemplate, f as renderComponent, m as maybeRenderHead, b as addAttribute } from '../../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, a as createAstro, r as renderTemplate, f as renderComponent, m as maybeRenderHead, b as addAttribute } from '../../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
-import { $ as $$Base } from '../../chunks/Base_BZqVdwvJ.mjs';
-import { g as getCollection } from '../../chunks/_astro_content_C1f-cK0W.mjs';
+import { $ as $$Base } from '../../chunks/Base_CvvbPL1K.mjs';
+import { g as getCollection } from '../../chunks/_astro_content_DXCNHP5B.mjs';
+import { v as validLanguages, d as defaultLanguage } from '../../chunks/languages_Bn8xGCxr.mjs';
 /* empty css                                    */
 export { renderers } from '../../renderers.mjs';
 
@@ -17,10 +18,9 @@ async function getStaticPaths() {
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
   Astro2.self = $$Index;
-  const validLanguages2 = ["en", "fr", "ar"];
   const { posts } = Astro2.props;
   const { lang } = Astro2.params;
-  const currentLang = validLanguages2.includes(lang) ? lang : "fr";
+  const currentLang = validLanguages.includes(lang) ? lang : defaultLanguage;
   const translations = {
     title: {
       fr: "Blog",

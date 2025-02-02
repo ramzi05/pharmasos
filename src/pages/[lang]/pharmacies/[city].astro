@@ -2,47 +2,32 @@
 import Layout from "@/layouts/Base.astro";
 import type { Pharmacy } from '@/types/pharmacy';
 import pharmacyData from '@/data/pharmacyData.json';
+import { validLanguages, type ValidLanguage, defaultLanguage } from '@/constants/languages';
+import { getCitySlug } from '@/utils/slug';
 
 export const prerender = true;
 
-type ValidLanguage = 'en' | 'fr' | 'ar';
 type StaticPath = {
   params: { lang: ValidLanguage; city: string };
   props: { pharmacies: Pharmacy[]; cityName: string };
 };
 
-// Helper function to create URL-safe slugs
-function createSlug(text: string, lang: ValidLanguage): string {
-  if (lang === 'ar') {
-    // For Arabic, use the English name as the slug
-    const cityData = (pharmacyData.pharmacies as Pharmacy[]).find(p => p.city.ar === text);
-    if (cityData) {
-      return cityData.city.en.toLowerCase().trim().replace(/\s+/g, '-');
-    }
-  }
-  return text.toLowerCase().trim().replace(/\s+/g, '-');
-}
-
 export async function getStaticPaths(): Promise<StaticPath[]> {
-  const validLanguages: ValidLanguage[] = ['en', 'fr', 'ar'];
   const paths: StaticPath[] = [];
+  const pharmacies = pharmacyData.pharmacies as Pharmacy[];
 
   for (const lang of validLanguages) {
-    // Get unique cities for this language
-    const cities = [...new Set((pharmacyData.pharmacies as Pharmacy[]).map(p => p.city[lang]))];
+    const cities = [...new Set(pharmacies.map(p => p.city[lang]))];
     
     for (const cityName of cities) {
-      const slug = createSlug(cityName, lang);
-      const cityPharmacies = (pharmacyData.pharmacies as Pharmacy[]).filter(p => 
-        createSlug(p.city[lang], lang) === slug
+      const slug = getCitySlug(cityName, lang, pharmacies);
+      const cityPharmacies = pharmacies.filter(p => 
+        getCitySlug(p.city[lang], lang, pharmacies) === slug
       );
 
       paths.push({
         params: { lang, city: slug },
-        props: { 
-          pharmacies: cityPharmacies,
-          cityName
-        }
+        props: { pharmacies: cityPharmacies, cityName }
       });
     }
   }
@@ -52,6 +37,7 @@ export async function getStaticPaths(): Promise<StaticPath[]> {
 
 const { lang, city } = Astro.params;
 const { pharmacies, cityName } = Astro.props;
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : defaultLanguage;
 
 const translations = {
   title: {
@@ -72,28 +58,28 @@ const translations = {
 } as const;
 ---
 
-<Layout title={translations.title[lang as ValidLanguage]}>
+<Layout title={translations.title[currentLang]}>
   <div class="pharmacy-page">
-    <h1>{translations.title[lang as ValidLanguage]}</h1>
-    <p class="subtitle">{translations.subtitle[lang as ValidLanguage]}</p>
+    <h1>{translations.title[currentLang]}</h1>
+    <p class="subtitle">{translations.subtitle[currentLang]}</p>
 
     <div class="pharmacy-list">
-      {(pharmacies as Pharmacy[]).map((pharmacy) => (
+      {pharmacies.map((pharmacy) => (
         <div class="pharmacy-card">
           <div class="card-header">
-            <h2>{pharmacy.name[lang as ValidLanguage]}</h2>
+            <h2>{pharmacy.name[currentLang]}</h2>
             <span class="hours-badge">{pharmacy.hours}</span>
           </div>
 
           <div class="card-content">
             <div class="info-row">
               <span class="icon">📍</span>
-              <span>{pharmacy.location[lang as ValidLanguage]}</span>
+              <span>{pharmacy.location[currentLang]}</span>
             </div>
 
             <div class="info-row">
               <span class="icon">🏢</span>
-              <span>{pharmacy.address[lang as ValidLanguage]}</span>
+              <span>{pharmacy.address[currentLang]}</span>
             </div>
 
             <div class="info-row phone">
@@ -103,7 +89,7 @@ const translations = {
           </div>
 
           <div class="card-footer">
-            <p class="directions-text">{translations.directions[lang as ValidLanguage]}</p>
+            <p class="directions-text">{translations.directions[currentLang]}</p>
             <div class="nav-buttons">
               <a href={pharmacy.maps.links.google_maps} target="_blank" rel="noopener noreferrer" class="nav-button">
                 Google Maps
@@ -239,20 +225,16 @@ const translations = {
 
   .nav-button:hover {
     background: #22C55E;
-    color: #000000;
+    color: white;
   }
 
-  @media (max-width: 768px) {
-    .pharmacy-list {
-      padding: 0 1rem;
-    }
+  /* RTL support for Arabic */
+  [dir="rtl"] .pharmacy-page {
+    direction: rtl;
+  }
 
-    .card-header h2 {
-      font-size: 1.25rem;
-    }
-
-    .nav-buttons {
-      padding: 0;
-    }
+  [dir="rtl"] .icon {
+    margin-right: 0;
+    margin-left: 0.75rem;
   }
 </style>

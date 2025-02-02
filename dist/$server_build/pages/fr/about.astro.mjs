@@ -1,6 +1,6 @@
-import { c as createComponent, r as renderTemplate, f as renderComponent, m as maybeRenderHead } from '../../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, r as renderTemplate, f as renderComponent, m as maybeRenderHead } from '../../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
-import { $ as $$Base } from '../../chunks/Base_BZqVdwvJ.mjs';
+import { $ as $$Base } from '../../chunks/Base_CvvbPL1K.mjs';
 /* empty css                                    */
 export { renderers } from '../../renderers.mjs';
 

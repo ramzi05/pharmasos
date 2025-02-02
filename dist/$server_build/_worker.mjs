@@ -1,6 +1,6 @@
 import { renderers } from './renderers.mjs';
-import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_CsRY-RG_.mjs';
-import { manifest as manifest$1 } from './manifest_DvA4mqh3.mjs';
+import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_70Bn-Eqm.mjs';
+import { manifest as manifest$1 } from './manifest_CDrVkWpN.mjs';
 
 const _page0 = () => import('./pages/_image.astro.mjs');
 const _page1 = () => import('./pages/404.astro.mjs');
@@ -21,8 +21,9 @@ const _page15 = () => import('./pages/_lang_/monolingual.astro.mjs');
 const _page16 = () => import('./pages/_lang_/pharmacies/_city_.astro.mjs');
 const _page17 = () => import('./pages/_lang_/pharmacies.astro.mjs');
 const _page18 = () => import('./pages/_lang_/rss.xml.astro.mjs');
-const _page19 = () => import('./pages/_lang_.astro.mjs');
-const _page20 = () => import('./pages/index.astro.mjs');
+const _page19 = () => import('./pages/_lang_/rss.xml.astro2.mjs');
+const _page20 = () => import('./pages/_lang_.astro.mjs');
+const _page21 = () => import('./pages/index.astro.mjs');
 
 const pageMap = new Map([
     ["node_modules/astro/dist/assets/endpoint/generic.js", _page0],
@@ -44,8 +45,9 @@ const pageMap = new Map([
     ["src/pages/[lang]/pharmacies/[city].astro", _page16],
     ["src/pages/[lang]/pharmacies.astro", _page17],
     ["src/pages/[lang]/rss.xml.js", _page18],
-    ["src/pages/[lang]/index.astro", _page19],
-    ["src/pages/index.astro", _page20]
+    ["src/pages/[lang]/rss.xml.ts", _page19],
+    ["src/pages/[lang]/index.astro", _page20],
+    ["src/pages/index.astro", _page21]
 ]);
 const serverIslandMap = new Map();
 const _manifest = Object.assign(manifest$1, {

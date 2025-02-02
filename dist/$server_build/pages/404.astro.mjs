@@ -1,7 +1,7 @@
-import { c as createComponent, a as createAstro, r as renderTemplate, b as addAttribute, d as renderHead, e as defineScriptVars, m as maybeRenderHead } from '../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, a as createAstro, r as renderTemplate, b as addAttribute, d as renderHead, e as defineScriptVars, m as maybeRenderHead } from '../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
 import 'clsx';
-import { D as DEFAULT_LOCALE, L as LOCALES } from '../chunks/i18n_DAci1bfl.mjs';
+import { D as DEFAULT_LOCALE, L as LOCALES } from '../chunks/i18n_Co-K_Ync.mjs';
 export { renderers } from '../renderers.mjs';
 
 var __freeze = Object.freeze;

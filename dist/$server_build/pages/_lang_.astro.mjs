@@ -1,7 +1,7 @@
-import { c as createComponent, a as createAstro, r as renderTemplate, f as renderComponent, m as maybeRenderHead } from '../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, a as createAstro, r as renderTemplate, f as renderComponent, m as maybeRenderHead } from '../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
-import '../chunks/i18n_DAci1bfl.mjs';
-import { $ as $$Base } from '../chunks/Base_BZqVdwvJ.mjs';
+import '../chunks/i18n_Co-K_Ync.mjs';
+import { $ as $$Base } from '../chunks/Base_CvvbPL1K.mjs';
 import { p as pharmacyData } from '../chunks/pharmacyData_lhpiWGKX.mjs';
 /* empty css                                 */
 export { renderers } from '../renderers.mjs';

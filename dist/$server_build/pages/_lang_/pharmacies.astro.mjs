@@ -1,9 +1,10 @@
-import { c as createComponent, a as createAstro, r as renderTemplate, m as maybeRenderHead, b as addAttribute, f as renderComponent } from '../../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, a as createAstro, r as renderTemplate, m as maybeRenderHead, b as addAttribute, f as renderComponent } from '../../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
-import { $ as $$Base } from '../../chunks/Base_BZqVdwvJ.mjs';
+import { $ as $$Base } from '../../chunks/Base_CvvbPL1K.mjs';
 import 'clsx';
 import { p as pharmacyData } from '../../chunks/pharmacyData_lhpiWGKX.mjs';
 /* empty css                                         */
+import { v as validLanguages, d as defaultLanguage } from '../../chunks/languages_Bn8xGCxr.mjs';
 export { renderers } from '../../renderers.mjs';
 
 const $$Astro$1 = createAstro();
@@ -54,16 +55,14 @@ const $$Astro = createAstro();
 const prerender = true;
 function getStaticPaths() {
   return validLanguages.map((lang) => ({
-    params: { lang },
-    props: { lang }
+    params: { lang }
   }));
 }
 const $$Pharmacies = createComponent(($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
   Astro2.self = $$Pharmacies;
-  const validLanguages2 = ["en", "fr", "ar"];
   const { lang } = Astro2.params;
-  const currentLang = validLanguages2.includes(lang) ? lang : "fr";
+  const currentLang = validLanguages.includes(lang) ? lang : defaultLanguage;
   const translations = {
     title: {
       fr: "Pharmacies de Garde",

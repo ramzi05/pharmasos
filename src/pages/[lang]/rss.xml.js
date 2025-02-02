@@ -1,26 +1,25 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@/consts';
-import { localeParams } from "@/i18n";
+import { validLanguages, defaultLanguage } from '@/constants/languages';
 
 export const prerender = true;
 
 export function getStaticPaths() {
-	return ['en', 'fr', 'ar'].map(lang => ({
+	return validLanguages.map(lang => ({
 		params: { lang }
 	}));
 }
 
 export async function GET(context) {
-
 	const locale = context.params.lang;
 
 	const localeTitle = typeof SITE_TITLE == "string"
 		? SITE_TITLE
-		: SITE_TITLE[locale];
+		: SITE_TITLE[locale] || 'PharmaGarde';
 	const localeDescription = typeof SITE_DESCRIPTION == "string"
 		? SITE_DESCRIPTION
-		: SITE_DESCRIPTION[locale];
+		: SITE_DESCRIPTION[locale] || 'Find on-duty pharmacies near you';
 
 	const posts = await getCollection('blog', ({ slug }) => {
 		return slug.split("/")[0] == locale;
@@ -30,12 +29,14 @@ export async function GET(context) {
 	return rss({
 		title: localeTitle,
 		description: localeDescription,
-		site: context.site,
+		site: context.site || 'https://pharmasos.vercel.app',
 		items: posts.map((post) => ({
 			title: post.data.title,
 			pubDate: post.data.date,
-			description: post.data.description,
+			description: post.data.description || '',
 			link: `/${locale}/blog/${post.slug}/`,
 		})),
+		customData: `<language>${locale}</language>`,
+		stylesheet: '/rss/styles.xsl'
 	});
 }

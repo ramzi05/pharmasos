@@ -1,10 +1,8 @@
 ---
 import Layout from "@/layouts/Base.astro";
+import { validLanguages, type ValidLanguage, defaultLanguage } from '@/constants/languages';
 
 export const prerender = true;
-
-const validLanguages = ['en', 'fr', 'ar'] as const;
-type ValidLanguage = typeof validLanguages[number];
 
 export function getStaticPaths() {
   return validLanguages.map(lang => ({
@@ -13,7 +11,7 @@ export function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
-const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : defaultLanguage;
 
 const translations = {
   title: {

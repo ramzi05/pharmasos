@@ -1,8 +1,8 @@
-import { c as createComponent, a as createAstro, r as renderTemplate, d as renderHead, e as defineScriptVars, b as addAttribute, m as maybeRenderHead } from '../chunks/astro/server_CxwdDprw.mjs';
+import { c as createComponent, a as createAstro, r as renderTemplate, d as renderHead, e as defineScriptVars, b as addAttribute, m as maybeRenderHead } from '../chunks/astro/server_BzzarInc.mjs';
 import 'kleur/colors';
 import 'clsx';
-import { u as useTranslations, D as DEFAULT_LOCALE, g as getLocalePaths, L as LOCALES } from '../chunks/i18n_DAci1bfl.mjs';
-import { X as X_ACCOUNT, S as SITE_DESCRIPTION, a as SITE_TITLE } from '../chunks/consts_zz-T4XvI.mjs';
+import { u as useTranslations, D as DEFAULT_LOCALE, g as getLocalePaths, L as LOCALES } from '../chunks/i18n_Co-K_Ync.mjs';
+import { X as X_ACCOUNT, S as SITE_DESCRIPTION, a as SITE_TITLE } from '../chunks/consts_Bk9uKFkb.mjs';
 export { renderers } from '../renderers.mjs';
 
 var __freeze = Object.freeze;
