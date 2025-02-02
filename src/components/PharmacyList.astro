@@ -8,12 +8,12 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Get today's date in YYYY-MM-DD format
-const today = new Date().toISOString().split('T')[0];
+// Format today's date to match your data format
+const today = new Date();
+const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
 // Get today's pharmacies
-const todayData = pharmacyData.find((day): day is DayData => day.date === today);
-const todayPharmacies = todayData?.pharmacies || [];
+const todayPharmacies = pharmacyData.pharmacies || [];
 
 // Get unique locations
 const locations: string[] = [...new Set(todayPharmacies.map((p) => p.location[lang]))];
@@ -22,23 +22,27 @@ interface Translations {
   allLocations: string;
   limitedHours: string;
   viewMap: string;
+  noPharmacies: string;
 }
 
 const translations: Record<Props['lang'], Translations> = {
   en: {
     allLocations: "All Locations",
     limitedHours: "Limited Hours",
-    viewMap: "View Map"
+    viewMap: "View Map",
+    noPharmacies: "No pharmacies found for this location"
   },
   fr: {
     allLocations: "Tous les emplacements",
     limitedHours: "Heures limitées",
-    viewMap: "Voir la carte"
+    viewMap: "Voir la carte",
+    noPharmacies: "Aucune pharmacie trouvée pour cette ville"
   },
   ar: {
     allLocations: "جميع المواقع",
     limitedHours: "ساعات محدودة",
-    viewMap: "عرض الخريطة"
+    viewMap: "عرض الخريطة",
+    noPharmacies: "لم يتم العثور على صيدليات في هذا الموقع"
   }
 };
 
@@ -55,33 +59,39 @@ const t: Translations = translations[lang];
     </select>
     
     <div class="hours-filter">
-      <button class="filter-btn" data-hours="all">All</button>
+      <button class="filter-btn active" data-hours="all">All</button>
       <button class="filter-btn" data-hours="limited">{t.limitedHours}</button>
       <button class="filter-btn" data-hours="24h">24/7</button>
     </div>
   </div>
 
   <div class="pharmacies-grid">
-    {todayPharmacies.map((pharmacy: Pharmacy) => (
-      <div 
-        class="pharmacy-card"
-        data-location={pharmacy.location[lang]}
-        data-hours={pharmacy.hours === "24/7" ? "24h" : "limited"}
-      >
-        <h3>{pharmacy.name[lang]}</h3>
-        <p>{pharmacy.location[lang]}</p>
-        <p>{pharmacy.phone}</p>
-        <p>{pharmacy.hours}</p>
-        <a 
-          href={pharmacy.maps.googleMaps}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="map-link"
+    {todayPharmacies.length > 0 ? (
+      todayPharmacies.map((pharmacy: Pharmacy) => (
+        <div 
+          class="pharmacy-card"
+          data-location={pharmacy.location[lang]}
+          data-hours={pharmacy.hours === "24h/24h" ? "24h" : "limited"}
         >
-          {t.viewMap}
-        </a>
+          <h3>{pharmacy.name[lang]}</h3>
+          <p>{pharmacy.location[lang]}</p>
+          <p>{pharmacy.phone}</p>
+          <p>{pharmacy.hours}</p>
+          <a 
+            href={pharmacy.maps.links.google_maps}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="map-link"
+          >
+            {t.viewMap}
+          </a>
+        </div>
+      ))
+    ) : (
+      <div class="no-pharmacies">
+        <p>{t.noPharmacies}</p>
       </div>
-    ))}
+    )}
   </div>
 </div>
 
@@ -282,5 +292,11 @@ filterButtons.forEach(btn => {
     .section-title {
       font-size: 1.5rem;
     }
+  }
+
+  .no-pharmacies {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-text);
   }
 </style>
