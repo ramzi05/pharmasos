@@ -9,7 +9,22 @@ export const getEnglishCityName = (arabicName: string, pharmacies: Pharmacy[]): 
   return cityData ? cityData.city.en : arabicName;
 };
 
-export const getCitySlug = (cityName: string, lang: ValidLanguage, pharmacies: Pharmacy[]): string => {
-  const slugBase = lang === 'ar' ? getEnglishCityName(cityName, pharmacies) : cityName;
-  return createSlug(slugBase);
-}; 
+interface CityNames {
+  fr: string;
+  en: string;
+  ar: string;
+}
+
+export function getCitySlug(cityNames: CityNames, lang: ValidLanguage): string {
+  // Always use the French name for URL slugs to maintain consistency
+  const baseName = cityNames.fr;
+  if (!baseName) return '';
+
+  return baseName
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+} 

@@ -86,11 +86,19 @@ const cityList = Object.values(cities)
 const lastUpdated = new Date(pharmacyData.date).toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : currentLang === 'fr' ? 'fr-FR' : 'en-US');
 
 // Function to get the correct city slug
-function getCitySlug(city: CityInfo, lang: ValidLanguage) {
-  const cityName = city.name[lang]?.toLowerCase().trim();
-  return cityName ? encodeURIComponent(cityName) : '';
+function getCitySlug(city: CityInfo) {
+  // Always use French name for consistency
+  const frenchName = city.name.fr;
+  if (!frenchName) return '';
+  
+  return frenchName
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
----
 
 <Layout title={translations.title[currentLang]}>
   <main class="main">
@@ -101,7 +109,7 @@ function getCitySlug(city: CityInfo, lang: ValidLanguage) {
     <div class="content">
       <div class="cities-list">
         {cityList.map((city) => {
-          const citySlug = getCitySlug(city, currentLang);
+          const citySlug = getCitySlug(city);
           return citySlug && (
             <a href={`/${currentLang}/pharmacies/${citySlug}`} class="city-item">
               <div class="city-left">
