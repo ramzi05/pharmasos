@@ -4,20 +4,30 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { LOCALES } from "@/i18n";
 
-type BlogEntry = CollectionEntry<'blog'>;
+export const prerender = true;
 
-export async function getStaticPaths() {
+const validLanguages = ['en', 'fr', 'ar'] as const;
+type ValidLanguage = typeof validLanguages[number];
+
+export function getStaticPaths() {
   const posts = await getCollection('blog');
-  return Object.keys(LOCALES).flatMap((lang) => 
-    posts.map((entry: BlogEntry) => ({
-      params: { 
-        lang,
-        id: entry.id.split('/').pop() || '' 
-      },
-      props: { entry }
-    }))
-  );
+  return validLanguages.map(lang => ({
+    params: { lang }
+  }));
 }
+
+const { lang } = Astro.params;
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
+
+const translations = {
+  title: {
+    fr: "Article",
+    en: "Post",
+    ar: "مقال"
+  }
+} as const;
+
+type BlogEntry = CollectionEntry<'blog'>;
 
 interface Props {
   entry: BlogEntry;
@@ -26,9 +36,9 @@ interface Props {
 const { entry } = Astro.props;
 ---
 
-<Layout title={entry.data.title}>
-  <article>
-    <h1>{entry.data.title}</h1>
+<Layout title={translations.title[currentLang]}>
+  <div class="blog-post">
+    <h1>{translations.title[currentLang]}</h1>
     {entry.data.description && <p>{entry.data.description}</p>}
-  </article>
+  </div>
 </Layout>

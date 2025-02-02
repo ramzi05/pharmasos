@@ -3,9 +3,13 @@ import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@/consts';
 import { localeParams } from "@/i18n";
 
+export const prerender = true;
 
-export const getStaticPaths = () => localeParams;
-
+export function getStaticPaths() {
+	return ['en', 'fr', 'ar'].map(lang => ({
+		params: { lang }
+	}));
+}
 
 export async function GET(context) {
 

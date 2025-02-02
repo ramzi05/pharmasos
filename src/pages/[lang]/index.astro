@@ -15,19 +15,37 @@ interface CityInfo {
 
 type LocaleKey = keyof CityInfo['name'];
 
-const { lang } = Astro.params;
-const locale = lang as LocaleKey;
-const t = useTranslations(locale as Lang);
+const validLanguages = ['en', 'fr', 'ar'] as const;
+type ValidLanguage = typeof validLanguages[number];
 
-export const getStaticPaths = () =>
-  Object.keys(LOCALES).map((lang) => ({
-    params: { lang },
+export function getStaticPaths() {
+  return validLanguages.map(lang => ({
+    params: { lang }
   }));
+}
+
+const { lang } = Astro.params;
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
+
+const translations = {
+  title: {
+    fr: "Accueil",
+    en: "Home",
+    ar: "الرئيسية"
+  },
+  welcome: {
+    fr: "Bienvenue sur PharmaGarde",
+    en: "Welcome to PharmaGarde",
+    ar: "مرحباً بكم في فارماغارد"
+  }
+} as const;
+
+const t = useTranslations(currentLang as Lang);
 
 const cities: Record<string, CityInfo> = pharmacyData.pharmacies
-  .filter(pharmacy => pharmacy?.city?.[locale])
+  .filter(pharmacy => pharmacy?.city?.[currentLang])
   .reduce((acc: Record<string, CityInfo>, pharmacy) => {
-    const cityName = pharmacy.city[locale];
+    const cityName = pharmacy.city[currentLang];
     if (!cityName) return acc;
 
     if (!acc[cityName]) {
@@ -47,274 +65,30 @@ const cities: Record<string, CityInfo> = pharmacyData.pharmacies
 
 const cityList = Object.values(cities)
   .sort((a: CityInfo, b: CityInfo) => 
-    a.name[locale].localeCompare(b.name[locale])
+    a.name[currentLang].localeCompare(b.name[currentLang])
   );
 
 // For debugging
-console.log('Available cities:', cityList.map(city => city.name[locale]));
+console.log('Available cities:', cityList.map(city => city.name[currentLang]));
 
 const lastUpdated = new Date(pharmacyData.date).toLocaleDateString();
 ---
 
-<Layout title={t({
-  en: "On-Duty Pharmacies",
-  fr: "Pharmacies de Garde",
-  ar: "صيدليات الحراسة"
-})}>
-  <div class="page-container">
-    <header class="header">
-      <h1>{t({
-        en: "On-Duty Pharmacies",
-        fr: "Pharmacies de Garde",
-        ar: "صيدليات الحراسة"
-      })}</h1>
-      <p class="update-info">
-        <span class="live-dot"></span>
-        {t({
-          en: "Last Updated",
-          fr: "Dernière mise à jour",
-          ar: "آخر تحديث"
-        })}: {lastUpdated}
-      </p>
-    </header>
-
-    <div class="intro-section">
-      <h2>
-        {t({
-          fr: "Vous cherchez une pharmacie de garde ?",
-          en: "Are you looking for an on-duty pharmacy ?",
-          ar: "هل تبحث عن صيدلية حراسة مفتوحة ؟",
-        })}
-      </h2>
-
-      <p>
-        {t({
-          fr: "Que ce soit pour des médicaments essentiels en pleine nuit, tôt le matin ou en cas d'urgence, Pharma SOS est votre partenaire fiable. Localisez la pharmacie la plus proche en quelques clics et obtenez l'aide dont vous avez besoin, quand vous en avez besoin.",
-          en: "Whether it's for essential medications in the middle of the night, early in the morning, or in case of an emergency, Pharma SOS is your reliable partner. Locate the nearest pharmacy in just a few clicks and get the help you need, when you need it.",
-          ar: "سواء كنت بحاجة إلى أدوية أساسية في منتصف الليل، أو في الصباح الباكر، أو في حالة الطوارئ، فإن Pharma SOS هو شريكك الموثوق. حدد موقع الصيدلية الأقرب إليك ببضع نقرات واحصل على المساعدة التي تحتاجها، عندما تحتاجها.",
-        })}
-      </p>
-    </div>
-
-    <div class="cities-grid">
-      {cityList.map((city: CityInfo) => {
-        const cityName = city.name[locale];
-        if (!cityName) return null;
-        
-        return (
-          <a href={`/${locale}/pharmacies/${cityName.toLowerCase()}`} class="city-card">
-            <div class="card-content">
-              <h2 class="city-name">{cityName}</h2>
-              <div class="pharmacy-count">
-                <span class="count">{city.count}</span>
-                <span class="label">{t({
-                  en: "Pharmacies",
-                  fr: "Pharmacies",
-                  ar: "صيدليات"
-                })}</span>
-              </div>
-              {city.open24h > 0 && (
-                <div class="open-24h">
-                  {city.open24h} {t({
-                    en: "Open 24/7",
-                    fr: "Ouvert 24h/24",
-                    ar: "مفتوح 24/24"
-                  })}
-                </div>
-              )}
-            </div>
-            <div class="card-footer">
-              <span>{t({
-                en: "View All Pharmacies",
-                fr: "Voir Toutes les Pharmacies",
-                ar: "عرض جميع الصيدليات"
-              })}</span>
-              <span class="arrow">→</span>
-            </div>
-          </a>
-        );
-      })}
-    </div>
+<Layout title={translations.title[currentLang]}>
+  <div class="home-page">
+    <h1>{translations.welcome[currentLang]}</h1>
+    <!-- Home page content here -->
   </div>
 </Layout>
 
 <style>
-  .page-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 1.5rem;
-    background: #000000;
-  }
-
-  .header {
+  .home-page {
+    padding: 2rem;
     text-align: center;
-    margin-bottom: 2rem;
   }
 
   h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.75rem;
-  }
-
-  .update-info {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #ffffff;
-    font-size: 0.875rem;
-  }
-
-  .live-dot {
-    width: 5px;
-    height: 5px;
-    background: #22c55e;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .intro-section {
-    max-width: 800px;
-    margin: 0 auto 5rem;
-    padding: 0 1rem;
-  }
-
-  .intro-section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 1rem;
-    text-align: start;
-  }
-
-  .intro-section p {
-    color: #e5e7eb;
-    line-height: 1.6;
-    font-size: 1rem;
-    font-weight: 400;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    opacity: 0.9;
-    text-align: start;
-  }
-
-  .cities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .city-card {
-    background: #111111;
-    border: 1px solid #222222;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .city-card:hover {
-    border-color: #22c55e;
-    box-shadow: 0 4px 6px rgba(34, 197, 94, 0.2);
-    transform: translateY(-2px);
-  }
-
-  .card-content {
-    padding: 1.5rem;
-    flex: 1;
-  }
-
-  .city-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 1rem;
-  }
-
-  .pharmacy-count {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #000000;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .pharmacy-count .count {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #22c55e;
-  }
-
-  .pharmacy-count .label {
-    font-size: 0.875rem;
-    color: #ffffff;
-    margin-top: 0.25rem;
-  }
-
-  .open-24h {
-    font-size: 0.875rem;
-    color: #22c55e;
-    background: #000000;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    text-align: center;
-  }
-
-  .card-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #222222;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #000000;
-  }
-
-  .card-footer span {
-    color: #ffffff;
-    font-size: 0.875rem;
-  }
-
-  .arrow {
-    font-size: 1.25rem;
-    color: #22c55e;
-    transition: transform 0.2s ease;
-  }
-
-  .city-card:hover .arrow {
-    transform: translateX(4px);
-  }
-
-  @media (max-width: 640px) {
-    .cities-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* RTL Support */
-  [dir="rtl"] .arrow {
-    transform: scaleX(-1);
-  }
-
-  [dir="rtl"] .city-card:hover .arrow {
-    transform: scaleX(-1) translateX(-4px);
-  }
-
-  /* RTL Support for Arabic */
-  [dir="rtl"] .intro-section h2,
-  [dir="rtl"] .intro-section p {
-    text-align: right;
-  }
-
-  /* LTR Support for French and English */
-  [dir="ltr"] .intro-section h2,
-  [dir="ltr"] .intro-section p {
-    text-align: left;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
   }
 </style>

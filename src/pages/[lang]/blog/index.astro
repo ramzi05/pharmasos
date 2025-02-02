@@ -6,13 +6,15 @@ import { LOCALES } from "@/i18n";
 
 type BlogEntry = CollectionEntry<'blog'>;
 
-export async function getStaticPaths() {
+export const prerender = true;
+
+const validLanguages = ['en', 'fr', 'ar'] as const;
+type ValidLanguage = typeof validLanguages[number];
+
+export function getStaticPaths() {
   const allPosts = await getCollection('blog');
-  return Object.keys(LOCALES).map((lang) => ({
-    params: { lang },
-    props: { 
-      posts: allPosts
-    }
+  return validLanguages.map(lang => ({
+    params: { lang }
   }));
 }
 
@@ -22,17 +24,28 @@ interface Props {
 
 const { posts } = Astro.props;
 const { lang } = Astro.params;
+const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
+
+const translations = {
+  title: {
+    fr: "Blog",
+    en: "Blog",
+    ar: "المدونة"
+  }
+} as const;
 ---
 
-<Layout title="Blog">
-  <h1>Blog Posts</h1>
-  <ul>
-    {posts.map((post: BlogEntry) => (
-      <li>
-        <a href={`/${lang}/blog/${post.id.split('/').pop()}`}>{post.data.title}</a>
-      </li>
-    ))}
-  </ul>
+<Layout title={translations.title[currentLang]}>
+  <div class="blog-page">
+    <h1>{translations.title[currentLang]}</h1>
+    <ul>
+      {posts.map((post: BlogEntry) => (
+        <li>
+          <a href={`/${lang}/blog/${post.id.split('/').pop()}`}>{post.data.title}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
 </Layout>
 
 <style>
