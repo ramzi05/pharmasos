@@ -84,6 +84,12 @@ const cityList = Object.values(cities)
   );
 
 const lastUpdated = new Date(pharmacyData.date).toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : currentLang === 'fr' ? 'fr-FR' : 'en-US');
+
+// Function to get the correct city slug
+function getCitySlug(city: CityInfo, lang: ValidLanguage) {
+  const cityName = city.name[lang]?.toLowerCase().trim();
+  return cityName ? encodeURIComponent(cityName) : '';
+}
 ---
 
 <Layout title={translations.title[currentLang]}>
@@ -94,28 +100,31 @@ const lastUpdated = new Date(pharmacyData.date).toLocaleDateString(currentLang =
 
     <div class="content">
       <div class="cities-list">
-        {cityList.map((city) => (
-          <a href={`/${currentLang}/pharmacies/${city.name[currentLang].toLowerCase()}`} class="city-item">
-            <div class="city-left">
-              <svg class="pharmacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"></path>
-                <path d="M12 8v8"></path>
-                <path d="M8 12h8"></path>
-              </svg>
-              <span class="city-name">{city.name[currentLang]}</span>
-            </div>
-            <div class="city-data">
-              <span class="pharmacy-count">
-                {city.count} {translations.pharmacies[currentLang]}
-              </span>
-              {city.open24h > 0 && (
-                <span class="open-24h">
-                  {city.open24h} {translations.open24h[currentLang]}
+        {cityList.map((city) => {
+          const citySlug = getCitySlug(city, currentLang);
+          return citySlug && (
+            <a href={`/${currentLang}/pharmacies/${citySlug}`} class="city-item">
+              <div class="city-left">
+                <svg class="pharmacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"></path>
+                  <path d="M12 8v8"></path>
+                  <path d="M8 12h8"></path>
+                </svg>
+                <span class="city-name">{city.name[currentLang]}</span>
+              </div>
+              <div class="city-data">
+                <span class="pharmacy-count">
+                  {city.count} {translations.pharmacies[currentLang]}
                 </span>
-              )}
-            </div>
-          </a>
-        ))}
+                {city.open24h > 0 && (
+                  <span class="open-24h">
+                    {city.open24h} {translations.open24h[currentLang]}
+                  </span>
+                )}
+              </div>
+            </a>
+          );
+        })}
       </div>
 
       <footer class="footer">
