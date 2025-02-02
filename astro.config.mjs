@@ -8,7 +8,11 @@ export default defineConfig({
   output: 'server',
   outDir: './dist',
   adapter: cloudflare({
-    mode: 'directory'
+    mode: 'directory',
+    runtime: {
+      mode: 'local',
+      type: 'pages'
+    }
   }),
   integrations: [mdx(), sitemap()],
   i18n: {

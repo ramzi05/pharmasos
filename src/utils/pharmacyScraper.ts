@@ -1,8 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import type { DayData, Pharmacy } from '../types/pharmacy';
-import fs from 'fs/promises';
-import path from 'path';
 
 const PHARMACY_URLS = {
   casablanca: 'https://annuaire-gratuit.ma/pharmacie-garde-casablanca.html',
@@ -76,19 +74,17 @@ function createMultilingualText(text: string) {
   };
 }
 
-export async function scrapeAllPharmacies(): Promise<void> {
+export async function scrapeAllPharmacies(): Promise<DayData[]> {
   try {
     const results = await Promise.all(
       Object.entries(PHARMACY_URLS).map(([city, url]) => 
         scrapePharmacyData(url, city)
       )
     );
-
-    const dataPath = path.join(process.cwd(), 'src/data/pharmacyData.json');
-    await fs.writeFile(dataPath, JSON.stringify(results, null, 2));
     
-    console.log('Pharmacy data updated successfully');
+    return results;
   } catch (error) {
-    console.error('Error updating pharmacy data:', error);
+    console.error('Error scraping pharmacy data:', error);
+    throw error;
   }
 } 
