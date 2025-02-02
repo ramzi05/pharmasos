@@ -18,13 +18,16 @@ interface CityNames {
 export function getCitySlug(cityNames: CityNames, lang: ValidLanguage): string {
   // Always use the French name for URL slugs to maintain consistency
   const baseName = cityNames.fr;
-  if (!baseName) return '';
+  if (!baseName || typeof baseName !== 'string') return '';
 
-  return baseName
+  const cleanName = baseName
     .toLowerCase()
     .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
     .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+    .replace(/-+/g, '-'); // Replace multiple consecutive hyphens with a single one
+
+  return cleanName || ''; // Return empty string if the result is empty
 } 

@@ -16,19 +16,35 @@ export async function getStaticPaths(): Promise<StaticPath[]> {
   const paths: StaticPath[] = [];
   const pharmacies = pharmacyData.pharmacies as Pharmacy[];
 
-  for (const lang of validLanguages) {
-    const cities = [...new Set(pharmacies.map(p => p.city[lang]))];
+  // Create a map of unique cities with their names in all languages
+  const uniqueCities = new Map();
+  
+  for (const pharmacy of pharmacies) {
+    const frenchName = pharmacy.city.fr;
+    if (!frenchName) continue;
     
-    for (const cityName of cities) {
-      const slug = getCitySlug(cityName, lang, pharmacies);
+    const slug = getCitySlug(pharmacy.city, 'fr');
+    if (!slug) continue;
+    
+    uniqueCities.set(slug, pharmacy.city);
+  }
+
+  // Generate paths for each language and valid city
+  for (const lang of validLanguages) {
+    for (const [slug, cityNames] of uniqueCities) {
       const cityPharmacies = pharmacies.filter(p => 
-        getCitySlug(p.city[lang], lang, pharmacies) === slug
+        getCitySlug(p.city, 'fr') === slug
       );
 
-      paths.push({
-        params: { lang, city: slug },
-        props: { pharmacies: cityPharmacies, cityName }
-      });
+      if (cityPharmacies.length > 0) {
+        paths.push({
+          params: { lang, city: slug },
+          props: { 
+            pharmacies: cityPharmacies,
+            cityName: cityNames[lang] || cityNames.fr // Fallback to French name if translation missing
+          }
+        });
+      }
     }
   }
 
