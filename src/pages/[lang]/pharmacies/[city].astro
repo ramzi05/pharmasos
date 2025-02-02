@@ -5,45 +5,57 @@ import pharmacyData from '@/data/pharmacyData.json';
 
 export const prerender = true;
 
+// Helper function to create URL-safe slugs
+function createSlug(text: string, lang: string) {
+  if (lang === 'ar') {
+    // For Arabic, use the English name as the slug
+    const englishName = pharmacyData.pharmacies.find(p => p.city.ar === text)?.city.en || text;
+    return englishName.toLowerCase().trim().replace(/\s+/g, '-');
+  }
+  return text.toLowerCase().trim().replace(/\s+/g, '-');
+}
+
+// Helper function to find city by slug
+function findCityBySlug(slug: string, lang: string) {
+  return pharmacyData.pharmacies.find(p => {
+    const citySlug = createSlug(p.city[lang], lang);
+    return citySlug === slug;
+  });
+}
+
 export async function getStaticPaths() {
-  // Get unique cities from all languages
-  const pharmacies = pharmacyData.pharmacies || [];
-  const cityPaths = [];
+  const paths = [];
+  const languages = ['en', 'fr', 'ar'] as const;
 
-  // For each pharmacy, create paths for each language using the correct city name
-  pharmacies.forEach(pharmacy => {
-    ['en', 'fr', 'ar'].forEach(lang => {
-      const citySlug = pharmacy.city[lang].toLowerCase().trim();
-      
-      // Check if we already have this combination
-      const exists = cityPaths.some(path => 
-        path.params.lang === lang && path.params.city === citySlug
-      );
-
-      if (!exists) {
-        cityPaths.push({
-          params: { lang, city: citySlug },
-          props: { 
-            pharmacies: pharmacies.filter(p => 
-              p.city[lang].toLowerCase().trim() === citySlug
-            )
-          }
-        });
-      }
+  languages.forEach(lang => {
+    // Get unique cities for this language
+    const cities = [...new Set(pharmacyData.pharmacies.map(p => p.city[lang]))];
+    
+    cities.forEach(cityName => {
+      const slug = createSlug(cityName, lang);
+      paths.push({
+        params: { lang, city: slug },
+        props: { 
+          pharmacies: pharmacyData.pharmacies.filter(p => 
+            createSlug(p.city[lang], lang) === slug
+          ),
+          cityName
+        }
+      });
     });
   });
 
-  return cityPaths;
+  return paths;
 }
 
 const { lang, city } = Astro.params;
-const { pharmacies } = Astro.props;
+const { pharmacies, cityName } = Astro.props;
 
 const translations = {
   title: {
-    fr: `${city} - Pharmacies de Garde`,
-    en: `${city} - On-Duty Pharmacies`,
-    ar: `${city} - صيدليات الحراسة`
+    fr: `${cityName} - Pharmacies de Garde`,
+    en: `${cityName} - On-Duty Pharmacies`,
+    ar: `${cityName} - صيدليات الحراسة`
   },
   subtitle: {
     fr: "Trouvez facilement une pharmacie ouverte près de chez vous",

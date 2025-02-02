@@ -13,11 +13,22 @@ const { lang } = Astro.props;
 // Get pharmacies
 const pharmacies: Pharmacy[] = pharmacyData.pharmacies || [];
 
+// Create URL-safe slugs for cities
+function createSlug(text: string, lang: string) {
+  if (lang === 'ar') {
+    // For Arabic, use the English name as the slug
+    const englishName = pharmacies.find(p => p.city.ar === text)?.city.en || text;
+    return englishName.toLowerCase().trim().replace(/\s+/g, '-');
+  }
+  return text.toLowerCase().trim().replace(/\s+/g, '-');
+}
+
 // Get unique cities with proper slugs for the current language
 const cities = [...new Set(pharmacies.map(p => ({
   name: p.city[lang],
-  slug: p.city[lang].toLowerCase().trim()
-})))].sort((a, b) => a.name.localeCompare(b.name));
+  slug: createSlug(p.city[lang], lang),
+  originalName: p.city[lang]
+})))].sort((a, b) => a.name.localeCompare(b.name, lang));
 
 interface Translations {
   allLocations: string;
@@ -59,7 +70,7 @@ console.log('Cities:', cities);
     <select id="city-select">
       <option value="">{t.allLocations}</option>
       {cities.map(({ name, slug }) => (
-        <option value={slug}>{name}</option>
+        <option value={slug} data-original={name}>{name}</option>
       ))}
     </select>
     
@@ -101,39 +112,12 @@ console.log('Cities:', cities);
 </div>
 
 <script>
-const locationFilter = document.getElementById('location-filter') as HTMLSelectElement;
-const pharmacyCards = document.querySelectorAll('.pharmacy-card');
+const citySelect = document.getElementById('city-select') as HTMLSelectElement;
 const filterButtons = document.querySelectorAll('.filter-btn');
 
-function filterPharmacies() {
-  const selectedLocation = locationFilter.value;
-  const selectedHours = document.querySelector('.filter-btn.active')?.getAttribute('data-hours');
-
-  pharmacyCards.forEach((card) => {
-    const location = card.getAttribute('data-location');
-    const hours = card.getAttribute('data-hours');
-
-    const locationMatch = selectedLocation === 'all' || location === selectedLocation;
-    const hoursMatch = !selectedHours || selectedHours === 'all' || hours === selectedHours;
-
-    (card as HTMLElement).style.display = locationMatch && hoursMatch ? 'block' : 'none';
-  });
-}
-
-locationFilter.addEventListener('change', filterPharmacies);
-
-filterButtons.forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    filterButtons.forEach(b => b.classList.remove('active'));
-    (e.target as HTMLElement).classList.add('active');
-    filterPharmacies();
-  });
-});
-
-const citySelect = document.getElementById('city-select') as HTMLSelectElement;
-  
 citySelect.addEventListener('change', (e) => {
   const select = e.target as HTMLSelectElement;
+  const selectedOption = select.options[select.selectedIndex];
   const selectedCity = select.value;
   const currentLang = document.documentElement.lang || 'fr';
   
@@ -142,6 +126,13 @@ citySelect.addEventListener('change', (e) => {
   } else {
     window.location.href = `/${currentLang}/pharmacies`;
   }
+});
+
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    (e.target as HTMLElement).classList.add('active');
+  });
 });
 </script>
 
