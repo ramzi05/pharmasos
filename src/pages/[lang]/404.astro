@@ -33,6 +33,11 @@ const translations = {
   <div class="error-page">
     <h1>{translations.title[currentLang]}</h1>
     <p>{translations.message[currentLang]}</p>
+    <a href={`/${currentLang}/`} class="home-link">
+      {currentLang === 'fr' ? "Retour à l'accueil" : 
+       currentLang === 'ar' ? "العودة إلى الصفحة الرئيسية" : 
+       "Back to home"}
+    </a>
   </div>
 </Layout>
 
@@ -55,5 +60,25 @@ const translations = {
   p {
     font-size: 1.2rem;
     color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .home-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #22C55E;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: background 0.2s ease;
+  }
+
+  .home-link:hover {
+    background: #16A34A;
+  }
+
+  /* RTL support for Arabic */
+  [dir="rtl"] .error-page {
+    direction: rtl;
   }
 </style>

@@ -2,7 +2,6 @@
 import Layout from "@/layouts/Base.astro";
 import NotTranslateCaution from "@/components/i18n/NotTranslateCaution.astro";
 import PageHeadline from "@/components/PageHeadline.astro";
-import { LOCALES } from "@/i18n";
 
 export const prerender = true;
 
@@ -18,50 +17,59 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 const currentLang = validLanguages.includes(lang as ValidLanguage) ? lang as ValidLanguage : 'fr';
 
-const title = {
-  en: "Title in English",
-  fr: "Titre en français",
-  ar: "العنوان بالعربية"
-};
-
-const description = {
-  en: "Description in English",
-  fr: "Description en français",
-  ar: "الوصف بالعربية"
-};
-
-const content = {
-  en: "Content in English",
-  fr: "Contenu en français",
-  ar: "المحتوى بالعربية"
-};
-
 const translations = {
   title: {
     fr: "Page monolingue",
     en: "Monolingual page",
     ar: "صفحة أحادية اللغة"
+  },
+  description: {
+    fr: "Cette page est un exemple de contenu monolingue.",
+    en: "This page is an example of monolingual content.",
+    ar: "هذه الصفحة مثال على المحتوى أحادي اللغة."
+  },
+  content: {
+    fr: "Le contenu de cette page est disponible en français uniquement.",
+    en: "The content of this page is available in English only.",
+    ar: "محتوى هذه الصفحة متوفر باللغة العربية فقط."
   }
 } as const;
 ---
 
 <Layout title={translations.title[currentLang]}>
-  <NotTranslateCaution usedLangs={["en", "fr", "ar"]} />
-  <div>
-    <PageHeadline title={title[currentLang as keyof typeof title]} />
-    <p>{description[currentLang as keyof typeof description]}</p>
-    <p>{content[currentLang as keyof typeof content]}</p>
+  <div class="monolingual-page">
+    <h1>{translations.title[currentLang]}</h1>
+    <p class="description">{translations.description[currentLang]}</p>
+    <p class="content">{translations.content[currentLang]}</p>
   </div>
 </Layout>
 
 <style>
   .monolingual-page {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 2rem;
     text-align: center;
   }
 
   h1 {
     font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .description {
+    font-size: 1.2rem;
+    color: #666;
     margin-bottom: 2rem;
+  }
+
+  .content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  /* RTL support for Arabic */
+  [dir="rtl"] .monolingual-page {
+    direction: rtl;
   }
 </style>
