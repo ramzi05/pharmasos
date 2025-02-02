@@ -6,11 +6,13 @@ import pharmacyData from '@/data/pharmacyData.json';
 export const prerender = true;
 
 // Helper function to create URL-safe slugs
-function createSlug(text: string, lang: string) {
+function createSlug(text: string, lang: string): string {
   if (lang === 'ar') {
     // For Arabic, use the English name as the slug
-    const englishName = pharmacyData.pharmacies.find(p => p.city.ar === text)?.city.en || text;
-    return englishName.toLowerCase().trim().replace(/\s+/g, '-');
+    const cityData = pharmacyData.pharmacies.find(p => p.city.ar === text);
+    if (cityData) {
+      return cityData.city.en.toLowerCase().trim().replace(/\s+/g, '-');
+    }
   }
   return text.toLowerCase().trim().replace(/\s+/g, '-');
 }
@@ -24,26 +26,28 @@ function findCityBySlug(slug: string, lang: string) {
 }
 
 export async function getStaticPaths() {
+  const validLanguages = ['en', 'fr', 'ar'] as const;
   const paths = [];
-  const languages = ['en', 'fr', 'ar'] as const;
 
-  languages.forEach(lang => {
+  for (const lang of validLanguages) {
     // Get unique cities for this language
     const cities = [...new Set(pharmacyData.pharmacies.map(p => p.city[lang]))];
     
-    cities.forEach(cityName => {
+    for (const cityName of cities) {
       const slug = createSlug(cityName, lang);
+      const cityPharmacies = pharmacyData.pharmacies.filter(p => 
+        createSlug(p.city[lang], lang) === slug
+      );
+
       paths.push({
         params: { lang, city: slug },
         props: { 
-          pharmacies: pharmacyData.pharmacies.filter(p => 
-            createSlug(p.city[lang], lang) === slug
-          ),
+          pharmacies: cityPharmacies,
           cityName
         }
       });
-    });
-  });
+    }
+  }
 
   return paths;
 }
@@ -67,7 +71,7 @@ const translations = {
     en: "Click to get directions on:",
     ar: "انقر للحصول على الاتجاهات على:"
   }
-};
+} as const;
 ---
 
 <Layout title={translations.title[lang]}>

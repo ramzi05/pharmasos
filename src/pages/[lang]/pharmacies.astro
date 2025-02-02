@@ -2,6 +2,8 @@
 import Layout from "@/layouts/Base.astro";
 import PharmacyList from "@/components/PharmacyList.astro";
 
+export const prerender = true;
+
 // Validate the language parameter
 const validLanguages = ['en', 'fr', 'ar'] as const;
 type ValidLanguage = typeof validLanguages[number];
@@ -13,12 +15,12 @@ const currentLang: ValidLanguage = validLanguages.includes(lang as any)
   ? (lang as ValidLanguage) 
   : 'fr';
 
-export const getStaticPaths = () => {
+export function getStaticPaths() {
   return validLanguages.map(lang => ({
     params: { lang },
     props: { lang }
   }));
-};
+}
 
 const translations = {
   title: {
