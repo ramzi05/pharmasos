@@ -1,6 +1,6 @@
 ---
 interface Props {
-  lang: string;
+  lang: 'en' | 'fr' | 'ar';
 }
 
 const { lang } = Astro.props;
@@ -10,12 +10,16 @@ const languages = [
   { code: 'en', name: 'English' },
   { code: 'ar', name: 'العربية', dir: 'rtl' }
 ];
+
+// Get the current path without the language prefix
+const currentPath = Astro.url.pathname;
+const pathWithoutLang = currentPath.split('/').slice(2).join('/');
 ---
 
 <div class="language-picker">
   {languages.map((language) => (
     <a
-      href={`/${language.code}`}
+      href={`/${language.code}/pharmacies`}
       class={`language-link ${lang === language.code ? 'active' : ''}`}
       data-language={language.code}
       dir={language.dir}

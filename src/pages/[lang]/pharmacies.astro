@@ -2,16 +2,16 @@
 import Layout from "@/layouts/Base.astro";
 import PharmacyList from "@/components/PharmacyList.astro";
 
-const title = "Pharmacies";
-
 // Validate the language parameter
-const validLanguages = ['en', 'fr', 'ar'];
+const validLanguages = ['en', 'fr', 'ar'] as const;
+type ValidLanguage = typeof validLanguages[number];
+
 const { lang } = Astro.params;
 
-// Redirect to default language if invalid
-if (!validLanguages.includes(lang)) {
-  return Astro.redirect('/fr/pharmacies');
-}
+// Ensure lang is a valid language
+const currentLang: ValidLanguage = validLanguages.includes(lang as any) 
+  ? (lang as ValidLanguage) 
+  : 'fr';
 
 export const getStaticPaths = () => {
   return validLanguages.map(lang => ({
@@ -26,32 +26,9 @@ const translations = {
     en: "On-Duty Pharmacies",
     ar: "صيدليات الحراسة"
   }
-};
+} satisfies Record<string, Record<ValidLanguage, string>>;
 ---
 
-<Layout title={translations.title[lang]}>
-  <PharmacyList lang={lang} />
-</Layout>
-
-<script>
-// Add this script to handle language switching
-document.addEventListener('astro:page-load', () => {
-  const languageLinks = document.querySelectorAll('a[data-language]');
-  languageLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const newLang = link.getAttribute('data-language');
-      const currentPath = window.location.pathname;
-      
-      // Extract the current route without language prefix
-      const pathParts = currentPath.split('/');
-      pathParts.splice(1, 1); // Remove the language part
-      const routePath = pathParts.join('/');
-      
-      // Construct the new URL with the selected language
-      const newUrl = `/${newLang}${routePath}`;
-      window.location.href = newUrl;
-    });
-  });
-});
-</script> 
+<Layout title={translations.title[currentLang]}>
+  <PharmacyList lang={currentLang} />
+</Layout> 
