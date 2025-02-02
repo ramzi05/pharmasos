@@ -37,6 +37,21 @@ const translations = {
     fr: "Bienvenue sur PharmaGarde",
     en: "Welcome to PharmaGarde",
     ar: "مرحباً بكم في فارماغارد"
+  },
+  pharmacies: {
+    fr: "pharmacies",
+    en: "pharmacies",
+    ar: "صيدليات"
+  },
+  open24h: {
+    fr: "ouvertes 24h/24",
+    en: "open 24/7",
+    ar: "مفتوحة 24/24"
+  },
+  lastUpdate: {
+    fr: "Dernière mise à jour",
+    en: "Last updated",
+    ar: "آخر تحديث"
   }
 } as const;
 
@@ -68,27 +83,250 @@ const cityList = Object.values(cities)
     a.name[currentLang].localeCompare(b.name[currentLang])
   );
 
-// For debugging
-console.log('Available cities:', cityList.map(city => city.name[currentLang]));
-
-const lastUpdated = new Date(pharmacyData.date).toLocaleDateString();
+const lastUpdated = new Date(pharmacyData.date).toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : currentLang === 'fr' ? 'fr-FR' : 'en-US');
 ---
 
 <Layout title={translations.title[currentLang]}>
-  <div class="home-page">
-    <h1>{translations.welcome[currentLang]}</h1>
-    <!-- Home page content here -->
-  </div>
+  <main class="main">
+    <div class="header">
+      <h1>{translations.welcome[currentLang]}</h1>
+    </div>
+
+    <div class="content">
+      <div class="cities-list">
+        {cityList.map((city) => (
+          <a href={`/${currentLang}/pharmacies/${city.name[currentLang].toLowerCase()}`} class="city-item">
+            <div class="city-left">
+              <svg class="pharmacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"></path>
+                <path d="M12 8v8"></path>
+                <path d="M8 12h8"></path>
+              </svg>
+              <span class="city-name">{city.name[currentLang]}</span>
+            </div>
+            <div class="city-data">
+              <span class="pharmacy-count">
+                {city.count} {translations.pharmacies[currentLang]}
+              </span>
+              {city.open24h > 0 && (
+                <span class="open-24h">
+                  {city.open24h} {translations.open24h[currentLang]}
+                </span>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <footer class="footer">
+        <small>{translations.lastUpdate[currentLang]}: {lastUpdated}</small>
+      </footer>
+    </div>
+  </main>
 </Layout>
 
 <style>
-  .home-page {
-    padding: 2rem;
-    text-align: center;
+  :root {
+    --color-green: #10b981;
+    --color-green-dark: #059669;
+    --color-black: #111827;
+    --color-gray: #374151;
+    --color-light: #f9fafb;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+  .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .header h1 {
+    font-size: 2.25rem;
+    color: var(--color-black);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+  }
+
+  .header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--color-green);
+    border-radius: 2px;
+  }
+
+  .content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  .cities-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .city-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    color: var(--color-black);
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+  }
+
+  .city-item:last-child {
+    border-bottom: none;
+  }
+
+  .city-item:hover {
+    background-color: #f8faf8;
+    transform: translateX(4px);
+  }
+
+  .city-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pharmacy-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    stroke: var(--color-green);
+  }
+
+  .city-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .city-data {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--color-gray);
+  }
+
+  .pharmacy-count {
+    padding: 0.25rem 0.75rem;
+    background: #f0fdf4;
+    border-radius: 999px;
+    color: var(--color-green-dark);
+    font-weight: 500;
+  }
+
+  .open-24h {
+    padding: 0.25rem 0.75rem;
+    background: #dcfce7;
+    border-radius: 999px;
+    color: var(--color-green-dark);
+    font-weight: 500;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    color: var(--color-gray);
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+
+  @media (max-width: 640px) {
+    .main {
+      padding: 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+    }
+
+    .city-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+
+    .city-data {
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .pharmacy-count, .open-24h {
+      display: inline-block;
+    }
+  }
+
+  [dir="rtl"] {
+    .city-item {
+      flex-direction: row-reverse;
+    }
+
+    .city-item:hover {
+      transform: translateX(-4px);
+    }
+
+    .city-left {
+      flex-direction: row-reverse;
+    }
+
+    .city-data {
+      flex-direction: row-reverse;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-green: #059669;
+      --color-green-dark: #10b981;
+      --color-black: #f9fafb;
+      --color-gray: #9ca3af;
+      --color-light: #1f2937;
+    }
+
+    .content {
+      background: #111827;
+      border-color: #374151;
+    }
+
+    .city-item {
+      border-bottom-color: #374151;
+    }
+
+    .city-item:hover {
+      background-color: #1f2937;
+    }
+
+    .pharmacy-count {
+      background: #064e3b;
+      color: #ecfdf5;
+    }
+
+    .open-24h {
+      background: #065f46;
+      color: #ecfdf5;
+    }
+
+    .footer {
+      border-top-color: #374151;
+      background: #1f2937;
+    }
   }
 </style>
