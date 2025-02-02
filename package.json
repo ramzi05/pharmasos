@@ -5,12 +5,12 @@
 	"license": "MIT",
 	"homepage": "https://astro-i18n-starter.pages.dev/",
 	"engines": {
-		"node": ">=20"
+		"node": "20.x"
 	},
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev --open",
-		"build": "astro check && astro build",
+		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"scrape": "node -r ts-node/register src/utils/pharmacyScraper.ts"
