@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
@@ -7,7 +6,9 @@ import cloudflare from '@astrojs/cloudflare';
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    mode: 'directory'
+  }),
   integrations: [mdx(), sitemap()],
   i18n: {
     defaultLocale: 'fr',
@@ -15,9 +16,6 @@ export default defineConfig({
     routing: {
       prefixDefaultLocale: true,
     },
-  },
-  build: {
-    format: 'directory'
   },
   vite: {
     ssr: {
