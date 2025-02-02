@@ -1,0 +1,51 @@
+---
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+
+const languages = [
+  { code: 'fr', name: 'Français' },
+  { code: 'en', name: 'English' },
+  { code: 'ar', name: 'العربية', dir: 'rtl' }
+];
+---
+
+<div class="language-picker">
+  {languages.map((language) => (
+    <a
+      href={`/${language.code}`}
+      class={`language-link ${lang === language.code ? 'active' : ''}`}
+      data-language={language.code}
+      dir={language.dir}
+    >
+      {language.name}
+    </a>
+  ))}
+</div>
+
+<style>
+  .language-picker {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .language-link {
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  .language-link:hover {
+    background-color: var(--color-hover);
+  }
+
+  .language-link.active {
+    color: var(--color-accent);
+    font-weight: bold;
+  }
+</style> 
